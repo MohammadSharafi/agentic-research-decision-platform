@@ -1,0 +1,345 @@
+# Agentic Research & Decision Intelligence Platform
+
+**Final Course Project Report**  
+**Topic:** Multi-agent AI systems for trustworthy clinical decision support  
+**Mode:** Deterministic mock/offline mode  
+**Run ID:** `54150ac7-b189-4ddb-bb0b-7dd8cf891483`  
+**Final quality score:** 93.1/100  
+**Confidence score:** 95.5/100
+
+## Abstract
+
+This report documents the Agentic Research & Decision Intelligence Platform, a multi-agent system that transforms a complex research query into an evidence-grounded academic report, figures, evaluation artifacts, and presentation. Ten specialized agents plan, retrieve, analyze, critique, verify, visualize, write, evaluate, present, and persist results through typed `WorkflowState` and conditional LangGraph routing. The default path is fully reproducible via `USE_MOCK_LLM=true`, a local corpus of verified references, Pytest coverage, and one-command demo scripts.
+
+## 1. Introduction
+
+Research and decision-support tasks require inspectable planning, retrieval, critique, and citation grounding—not only fluent prose. This project implements a multi-agent platform for trustworthy clinical decision support as a demanding demonstration scenario.
+
+## 2. Problem Statement
+
+Given a broad topic, the system must produce a professional evidence-grounded report and presentation with task decomposition, ranked retrieval, critique loops, claim checks, figures, LaTeX/PDF output, rubric evaluation, and persistent memory—without paid API keys in the grading path.
+
+## 3. Motivation
+
+Clinical decision support illustrates high-stakes requirements: workflow fit, governance, and hallucination risk control matter as much as model fluency.
+
+## 4. Related Work
+
+The design draws on retrieval-augmented generation, ReAct-style tool use, Reflexion/Self-Refine critique loops, multi-agent frameworks (LangGraph, AutoGen, CrewAI, Semantic Kernel, Google ADK), and clinical AI reporting guidance (CONSORT-AI, SPIRIT-AI, DECIDE-AI).
+
+## 5. System Overview
+
+Five layers: Streamlit/FastAPI interfaces, graph orchestration, specialized agents, tool adapters, and SQLite/filesystem outputs.
+
+**Figure 1. Overall System Architecture.** See `report/assets/system_architecture.md` for Mermaid source.
+
+## 6. Multi-Agent Architecture
+
+Ten agents collaborate through `WorkflowState`. Figure below shows shared-state communication.
+
+**Figure 3. Agent Communication Protocol.** See `report/assets/agent_communication.md` for Mermaid source.
+
+**Table 1. Agent Roles**
+
+| Agent | Responsibility | Input | Output |
+| --- | --- | --- | --- |
+| Planner | Task decomposition and routing | User query | Execution plan (PlanStep list) |
+| Research | Evidence retrieval | Query and plan | Ranked Source objects |
+| Analyst | Metrics, comparisons, formulas | Retrieved sources | Analysis tables and metrics |
+| Critic | Weakness and risk review | Analysis and sources | needs_revision flag and critique |
+| Fact-Checker | Claim grounding | Approved analysis | ClaimCheck objects with citations |
+| Visualization | Figures and diagrams | Workflow state snapshot | PNG, SVG, and Mermaid assets |
+| Report Writer | Academic synthesis | Full workflow state | Markdown, LaTeX, and PDF reports |
+| Evaluator | Rubric scoring | Report and figures | EvaluationScore JSON/Markdown |
+| Presentation | Stakeholder communication | Evaluated state | Markdown and PPTX slides |
+| Memory | Persistence | Completed workflow state | SQLite run record |
+
+## 7. Agent Roles and Responsibilities
+
+Planner decomposes; Research retrieves; Analyst structures metrics; Critic challenges evidence; Fact-Checker grounds claims; Visualization renders diagrams; Report Writer compiles Markdown/LaTeX/PDF; Evaluator scores rubric; Presentation produces slides; Memory persists runs.
+
+## 8. LangGraph Workflow Design
+
+Conditional edges enable research revision and report revision loops.
+
+**Figure 2. LangGraph Multi-Agent Workflow.** See `report/assets/workflow.md` for Mermaid source.
+
+**Figure 4. Report Generation Pipeline.** See `report/assets/report_pipeline.md` for Mermaid source.
+
+## 9. Agentic Behavior and Conditional Routing
+
+`route_after_critic` returns `research` when evidence is weak; `route_after_evaluator` returns `report` when quality score Q < τ (τ = 78).
+
+## 10. State Management and Memory
+
+Serializable `WorkflowState` and SQLite run records support API inspection via `GET /runs/{run_id}` without hidden cross-run prompt conditioning.
+
+## 11. Tool-Use Design
+
+Deterministic tools handle search, citations, visualization, LaTeX compilation, and safe file IO. Agents remain orchestration-focused.
+
+## 12. Retrieval and Citation Strategy
+
+The mock corpus contains **21** references. Retrieval ranks by keyword overlap and credibility; the fact checker uses only sources already in state.
+
+## 13. Mathematical Formulation
+
+Task decomposition:
+
+```latex
+T = \{t_1, t_2, ..., t_n\}
+```
+
+Weighted confidence:
+
+```latex
+C = \frac{\sum_{i=1}^{n} w_i s_i}{\sum_{i=1}^{n} w_i}
+```
+
+Overall quality (demo confidence: **95.5/100**):
+
+```latex
+Q = \alpha F + \beta R + \gamma S + \delta C
+```
+
+Revision decision:
+
+```latex
+r = \begin{cases} 1, & Q < \tau \\ 0, & Q \geq \tau \end{cases}
+```
+
+## 14. Implementation Details
+
+Python modules under `app/agents`, `app/graph`, `app/tools`, `app/models`, `app/storage`, `app/api`, and `app/ui`. LangGraph compiles when installed; fallback runner preserves routing semantics.
+
+## 15. FastAPI Backend Design
+
+**Table 3. API Endpoints**
+
+| Endpoint | Method | Purpose |
+| --- | --- | --- |
+| /health | GET | Service readiness check |
+| /run | POST | Execute the full agentic workflow |
+| /runs/{run_id} | GET | Retrieve stored run metadata and serialized state |
+| /runs/{run_id}/report | GET | Download the generated Markdown report |
+| /runs/{run_id}/presentation | GET | Download the presentation artifact |
+| /runs/{run_id}/figures | GET | List paths to generated figure files |
+
+## 16. User Interface and Demonstration
+
+A polished Streamlit interface (`app/ui/streamlit_app.py`) provides a professor-friendly demo surface. Users enter a topic, select mock or real mode, launch the workflow, inspect agent cards, review rubric scores with progress bars, preview figures, and download PDF/Markdown reports, presentations, and evaluation files.
+
+**Tabs:** Overview | Workflow | Agents | Results | Figures | Downloads | About
+
+**Why the UI matters:** It makes multi-agent behavior inspectable during grading and live demonstration.
+
+**Launch:**
+
+```bash
+streamlit run app/ui/streamlit_app.py
+```
+
+**Capture assets:**
+
+```bash
+python scripts/capture_ui_screenshots.py
+```
+
+![Actual Streamlit overview interface](assets/ui/ui_home.png)
+
+![Workflow tab with pipeline timeline](assets/ui/ui_workflow.png)
+
+![Agents tab with agent output cards](assets/ui/ui_agent_outputs.png)
+
+![Results tab with evaluation breakdown](assets/ui/ui_results.png)
+
+![Figures tab gallery preview](assets/ui/ui_figures.png)
+
+![Demo evaluation score summary](assets/results/demo_evaluation_score.png)
+
+Mock mode uses a local deterministic corpus. The clinical demo is academic only and not medical advice. See `report/assets/ui/capture_metadata.json` for whether UI images are browser captures or fallback documentation renders.
+
+## 17. Report Generation Pipeline
+
+**Figure 5. Evaluation Pipeline.** See `report/assets/evaluation_pipeline.md` for Mermaid source.
+
+Canonical outputs: `report/final_report.tex`, `report/final_report.pdf`, `report/final_report.md`. Build PDF with `python scripts/build_report_pdf.py`.
+
+## 18. Evaluation Methodology
+
+**Figure 6. Overall System Architecture.**
+
+![Overall System Architecture](assets/overall_system_architecture.png)
+
+**Table 4. Evaluation Rubric**
+
+| Criterion | Description | Weight |
+| --- | --- | --- |
+| Factuality | Share of claims supported by retrieved sources | 15% |
+| Relevance | Alignment between query, plan, and final report | 12% |
+| Completeness | Presence of required sections, tables, figures, and formulas | 12% |
+| Structure | Logical organization and academic readability | 10% |
+| Citation quality | Traceable references and citation markers | 15% |
+| Clarity | Plain-language explanations of technical decisions | 10% |
+| Visual quality | Architecture diagrams, charts, and labeled figures | 13% |
+| Reproducibility | Mock mode, tests, scripts, Docker, and saved artifacts | 13% |
+
+**Table 6. Final Evaluation Scores**
+
+| Dimension | Score |
+| --- | --- |
+| Factuality | pending |
+| Relevance | pending |
+| Completeness | pending |
+| Structure | pending |
+| Citation quality | pending |
+| Clarity | pending |
+| Visual quality | pending |
+| Reproducibility | pending |
+| Total | pending |
+
+## 19. Results
+
+Retrieved **21** sources, generated **14** figures, final score **93.1/100**.
+
+**Figure 7. Conditional Multi-Agent Workflow.**
+
+![Conditional Multi-Agent Workflow](assets/multi_agent_workflow_diagram.png)
+
+**Figure 8. LangGraph State Transition Diagram.**
+
+![LangGraph State Transition Diagram](assets/langgraph_state_transition_diagram.png)
+
+## 20. Testing and Reproducibility
+
+Run `python -m compileall app scripts`, `python scripts/run_demo.py`, `python scripts/build_report_pdf.py`, and `pytest -v`.
+
+## 21. Error Analysis
+
+Expected errors: stale evidence, incomplete retrieval, weak claim alignment, overconfident clinical wording. Mitigations: critique loops, claim checks, limitations, evaluator thresholds, human review.
+
+## 22. Limitations
+
+**Table 5. Limitations and Mitigations**
+
+| Limitation | Impact | Mitigation |
+| --- | --- | --- |
+| Static mock corpus | Evidence may be stale or incomplete | Deterministic grading; optional live search adapters |
+| Real LLM dependency in production | Non-deterministic outputs without keys | USE_MOCK_LLM=true default; provider adapters behind tools |
+| Citation verification limits | Tag-level checks miss entailment errors | Fact-checker gates claims; human review required |
+| Clinical prototype scope | Not validated for patient-specific decisions | Explicit limitations, ethics section, no diagnosis claims |
+| Human review requirement | Automation bias if outputs are trusted blindly | Critic mandates limitations; evaluator threshold gate |
+
+## AI-Assisted Development Disclosure
+
+This submission was developed with external AI engineering assistants used transparently as development aids—not as unsupervised authors. The student defined requirements, directed architecture, reviewed outputs, ran tests, and prepared final deliverables.
+
+| Tool | Purpose | Human Oversight |
+| --- | --- | --- |
+| ChatGPT | Planning, architecture, documentation, prompt engineering | Student reviewed and refined outputs |
+| Codex-style assistant | Code generation, tests, scripts, docs | Student tested and validated implementation |
+| Cursor AI | Refactoring, report polishing, LaTeX improvement | Student supervised edits and verified behavior |
+| NotebookLM | Presentation drafting and speaker notes | Student reviewed and adapted slides |
+
+**Development AI vs. project AI:** External tools helped *build* the repository. The implemented platform also contains **internal runtime agents** (Planner, Research, Analyst, Critic, Fact-Checker, Visualization, Report Writer, Evaluator, Presentation, Memory) orchestrated at execution time. See `docs/AI_USAGE_GUIDE.md` and `docs/AI_GUIDE.md`.
+
+> AI tools were used as development assistants. The student directed the project requirements, reviewed the generated outputs, tested the system, selected the architecture, validated the deliverables, and prepared the final submission.
+
+## 23. Ethical Considerations
+
+Not a medical device. No patient-specific diagnosis. Requires governance, PHI controls, and clinician responsibility in any real deployment.
+
+## 24. Future Work
+
+Live retrieval, vector stores, entailment-based fact checking, human-in-the-loop approval, async jobs, and formal clinical evaluation.
+
+## 25. Conclusion
+
+The platform demonstrates graph-based multi-agent orchestration producing transparent, evidence-grounded academic deliverables suitable for university evaluation.
+
+## 26. Framework Comparison
+
+**Table 2. Framework Comparison**
+
+| Framework | Strengths | Limitations | Suitability for This Project |
+| --- | --- | --- | --- |
+| LangGraph | Typed graph orchestration with conditional edges | Requires explicit state design | Best fit: mirrors critique and evaluation loops |
+| Google ADK | Code-first agent toolkit with Google ecosystem deployment | Younger ecosystem and vendor coupling | Useful for Gemini/Vertex deployments, not required here |
+| AutoGen | Conversational multi-agent patterns | Can become chat-loop centric | Good for research prototypes; less explicit graph control |
+| CrewAI | Role/task abstraction is easy to teach | Less explicit low-level routing | Suitable for sequential crews, not revision gates |
+| Semantic Kernel | Enterprise-friendly plugins and planners | Broad SDK surface area | Strong for Microsoft stacks; heavier than needed |
+
+## 27. Claim Checks
+
+- **Supported:** Retrieval grounding can reduce unsupported generation by forcing reports to cite external evidence. (Patrick Lewis, 2020); (Shahul Es, 2023). Supported by tagged source evidence.
+- **Supported:** Clinical decision support requires human oversight and careful workflow integration. (Amit X. Garg, 2005); (Kensaku Kawamoto, 2005); (Reed T. Sutton, 2020). Supported by tagged source evidence.
+- **Supported:** Conditional multi-agent graphs make critique and revision loops explicit. (Google, 2026); (Qingyun Wu, 2023); (Shunyu Yao, 2022). Supported by tagged source evidence.
+- **Supported:** Evaluation should include factuality, relevance, structure, citation quality, and reproducibility. (Amit X. Garg, 2005); (Brennan Vasey, 2022); (Kensaku Kawamoto, 2005). Supported by tagged source evidence.
+- **Supported:** The prototype is not a medical device and should not produce patient-specific diagnosis. (Brennan Vasey, 2022); (Reed T. Sutton, 2020); (World Health Organization, 2021). Supported by tagged source evidence.
+
+## 28. Figures Appendix
+
+**Figure 1. Overall System Architecture.** See `report/assets/system_architecture.md` for Mermaid source.
+**Figure 2. LangGraph Multi-Agent Workflow.** See `report/assets/workflow.md` for Mermaid source.
+**Figure 3. Agent Communication Protocol.** See `report/assets/agent_communication.md` for Mermaid source.
+**Figure 4. Report Generation Pipeline.** See `report/assets/report_pipeline.md` for Mermaid source.
+**Figure 5. Evaluation Pipeline.** See `report/assets/evaluation_pipeline.md` for Mermaid source.
+**Figure 6. Overall System Architecture.**
+
+![Overall System Architecture](assets/overall_system_architecture.png)
+**Figure 7. Conditional Multi-Agent Workflow.**
+
+![Conditional Multi-Agent Workflow](assets/multi_agent_workflow_diagram.png)
+**Figure 8. LangGraph State Transition Diagram.**
+
+![LangGraph State Transition Diagram](assets/langgraph_state_transition_diagram.png)
+**Figure 9. Agent Communication Diagram.**
+
+![Agent Communication Diagram](assets/agent_communication_diagram.png)
+**Figure 10. Report Generation Pipeline.**
+
+![Report Generation Pipeline](assets/report_generation_pipeline_diagram.png)
+**Figure 11. Evaluation Pipeline.**
+
+![Evaluation Pipeline](assets/evaluation_pipeline_diagram.png)
+**Figure 12. Evidence Sources by Theme.**
+
+![Evidence Sources by Theme](assets/evidence_by_theme.png)
+**Figure 13. Prototype Quality Profile.**
+
+![Prototype Quality Profile](assets/quality_radar.png)
+**Figure 14. Conceptual Grounding Pipeline.**
+
+![Conceptual Grounding Pipeline](assets/conceptual_grounding_pipeline.png)
+
+## Critic Notes
+
+- Evidence coverage is adequate for a prototype, but deployment claims must remain bounded.
+- The system should emphasize clinician oversight, auditability, and uncertainty rather than autonomous diagnosis.
+- The mock corpus is suitable for reproducible testing but must be refreshed for real clinical use.
+
+## References
+
+See `report/references.bib` for BibTeX entries. Retrieved sources in this run:
+
+1. Reed T. Sutton, David Pincock, Daniel C. Baumgart, et al. (2020). *An Overview of Clinical Decision Support Systems: Benefits, Risks, and Strategies for Success*. [https://doi.org/10.1038/s41746-020-0221-y](https://doi.org/10.1038/s41746-020-0221-y)
+2. Amit X. Garg, Neill K. J. Adhikari, Heather McDonald, et al. (2005). *Effects of Computerized Clinical Decision Support Systems on Practitioner Performance and Patient Outcomes*. [https://doi.org/10.1001/jama.293.10.1223](https://doi.org/10.1001/jama.293.10.1223)
+3. Kensaku Kawamoto, Caitlin A. Houlihan, E. Andrew Balas, David F. Lobach (2005). *Improving Clinical Practice Using Clinical Decision Support Systems: A Systematic Review of Trials*. [https://doi.org/10.1136/bmj.330.7494.765](https://doi.org/10.1136/bmj.330.7494.765)
+4. Brennan Vasey, Xiaoxuan Liu, et al. (2022). *DECIDE-AI: New Reporting Guidelines to Bridge the Development-to-Implementation Gap in Clinical Artificial Intelligence*. [https://doi.org/10.1038/s41591-022-01772-9](https://doi.org/10.1038/s41591-022-01772-9)
+5. Google (2026). *Agent Development Kit Multi-Agent Systems Documentation*. [https://google.github.io/adk-docs/agents/multi-agents/](https://google.github.io/adk-docs/agents/multi-agents/)
+6. World Health Organization (2021). *Ethics and Governance of Artificial Intelligence for Health*. [https://www.who.int/publications/i/item/9789240029200](https://www.who.int/publications/i/item/9789240029200)
+7. Xiaoxuan Liu, Samantha Cruz Rivera, David Moher, et al. (2020). *CONSORT-AI Extension: Reporting Guidelines for Clinical Trials of Artificial Intelligence Interventions*. [https://doi.org/10.1038/s41591-020-1034-x](https://doi.org/10.1038/s41591-020-1034-x)
+8. Samantha Cruz Rivera, Xiaoxuan Liu, An-Wen Chan, et al. (2020). *SPIRIT-AI Extension: Protocol Guidelines for Clinical Trials of Artificial Intelligence Interventions*. [https://doi.org/10.1016/S2589-7500(20)30219-3](https://doi.org/10.1016/S2589-7500(20)30219-3)
+9. Karan Singhal, Shekoofeh Azizi, Tao Tu, et al. (2023). *Large Language Models Encode Clinical Knowledge*. [https://doi.org/10.1038/s41586-023-06291-2](https://doi.org/10.1038/s41586-023-06291-2)
+10. Ziwei Ji, Nayeon Lee, Rita Frieske, et al. (2023). *Survey of Hallucination in Natural Language Generation*. [https://doi.org/10.1145/3571730](https://doi.org/10.1145/3571730)
+11. Qingyun Wu, Gagan Bansal, Jieyu Zhang, et al. (2023). *AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation*. [https://doi.org/10.48550/arXiv.2308.08155](https://doi.org/10.48550/arXiv.2308.08155)
+12. Patrick Lewis, Ethan Perez, Aleksandra Piktus, et al. (2020). *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks*. [https://doi.org/10.48550/arXiv.2005.11401](https://doi.org/10.48550/arXiv.2005.11401)
+13. Shunyu Yao, Jeffrey Zhao, Dian Yu, et al. (2022). *ReAct: Synergizing Reasoning and Acting in Language Models*. [https://doi.org/10.48550/arXiv.2210.03629](https://doi.org/10.48550/arXiv.2210.03629)
+14. Emily M. Bender, Timnit Gebru, Angelina McMillan-Major, Shmargaret Shmitchell (2021). *On the Dangers of Stochastic Parrots: Can Language Models Be Too Big?*. [https://doi.org/10.1145/3442188.3445922](https://doi.org/10.1145/3442188.3445922)
+15. Noah Shinn, Federico Cassano, Ashwin Gopinath, et al. (2023). *Reflexion: Language Agents with Verbal Reinforcement Learning*. [https://doi.org/10.48550/arXiv.2303.11366](https://doi.org/10.48550/arXiv.2303.11366)
+16. LangChain (2026). *LangGraph Graph API Documentation*. [https://docs.langchain.com/oss/python/langgraph/graph-api](https://docs.langchain.com/oss/python/langgraph/graph-api)
+17. Aman Madaan, Niket Tandon, Prakhar Gupta, et al. (2023). *Self-Refine: Iterative Refinement with Self-Feedback*. [https://doi.org/10.48550/arXiv.2303.17651](https://doi.org/10.48550/arXiv.2303.17651)
+18. Shahul Es, Jithin James, Luis Espinosa-Anke, Steven Schockaert (2023). *RAGAS: Automated Evaluation of Retrieval Augmented Generation*. [https://doi.org/10.48550/arXiv.2309.15217](https://doi.org/10.48550/arXiv.2309.15217)
+19. Microsoft (2026). *Semantic Kernel Agent Framework Documentation*. [https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/)
+20. CrewAI (2026). *CrewAI Documentation*. [https://docs.crewai.com/](https://docs.crewai.com/)
+21. Lilian Weng (2023). *LLM Powered Autonomous Agents*. [https://lilianweng.github.io/posts/2023-06-23-agent/](https://lilianweng.github.io/posts/2023-06-23-agent/)

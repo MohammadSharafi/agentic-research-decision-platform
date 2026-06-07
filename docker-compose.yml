@@ -1,0 +1,23 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./outputs:/app/outputs
+      - ./app/storage:/app/app/storage
+  ui:
+    build: .
+    command: streamlit run app/ui/streamlit_app.py --server.address 0.0.0.0 --server.port 8501
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    volumes:
+      - ./outputs:/app/outputs
+      - ./app/storage:/app/app/storage
+    depends_on:
+      - api
+
