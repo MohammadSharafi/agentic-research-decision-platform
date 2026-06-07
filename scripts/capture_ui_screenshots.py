@@ -4,8 +4,10 @@
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 import sys
+import textwrap
 import time
 from pathlib import Path
 
@@ -51,6 +53,54 @@ def _matplotlib_available() -> bool:
 def _copy_asset(path: Path) -> None:
     ensure_dir(SCREENSHOT_OUTPUT_DIR)
     (SCREENSHOT_OUTPUT_DIR / path.name).write_bytes(path.read_bytes())
+
+
+def _strip_inline_markdown(text: str) -> str:
+    text = re.sub(r"\*\*([^*]+)\*\*", r"\1", text)
+    text = re.sub(r"`([^`]+)`", r"\1", text)
+    return " ".join(text.split())
+
+
+def _report_preview_text(state, report_md: Path, wrap_width: int = 76) -> str:
+    topic = _strip_inline_markdown(state.query or "Research topic")
+    lines = [
+        "Agentic Research & Decision Intelligence Platform",
+        "Final Course Project Report",
+        "",
+        f"Topic: {topic}",
+        f"Run ID: {state.run_id}",
+        f"Quality score: {state.evaluation.total}/100",
+        f"Sources: {len(state.sources)}  |  Figures: {len(state.figures)}",
+        "",
+        "Abstract",
+        "-" * wrap_width,
+    ]
+
+    abstract = ""
+    section_titles: list[str] = []
+    if report_md.exists():
+        md_text = report_md.read_text(encoding="utf-8")
+        if "## Abstract" in md_text:
+            abstract = md_text.split("## Abstract", 1)[1].split("\n##", 1)[0].strip()
+            abstract = _strip_inline_markdown(abstract)
+        for raw in md_text.splitlines():
+            if raw.startswith("## "):
+                title = _strip_inline_markdown(raw[3:].strip())
+                if title.lower() != "abstract":
+                    section_titles.append(title)
+
+    if not abstract:
+        abstract = (
+            "Multi-agent evidence-grounded research report with critique loops, "
+            "claim checks, figures, LaTeX/PDF output, and presentation artifacts."
+        )
+    lines.append(textwrap.fill(abstract, width=wrap_width))
+    lines.extend(["", "Included sections", "-" * wrap_width])
+    for title in section_titles[:8]:
+        lines.append(f"  {title}")
+    if len(section_titles) > 8:
+        lines.append(f"  … and {len(section_titles) - 8} more sections")
+    return "\n".join(lines)
 
 
 def generate_result_images(state) -> list[Path]:
@@ -121,18 +171,37 @@ def generate_result_images(state) -> list[Path]:
         created.append(figures_path)
 
     report_md = PROJECT_DIR / "report" / "final_report.md"
-    preview_lines = []
-    if report_md.exists():
-        for line in report_md.read_text(encoding="utf-8").splitlines()[:18]:
-            preview_lines.append(line[:100])
-    fig, ax = plt.subplots(figsize=(12, 7))
+    preview_text = _report_preview_text(state, report_md)
+    fig, ax = plt.subplots(figsize=(12, 8))
     ax.axis("off")
-    ax.set_title("Demo Report Output Preview", fontsize=18, weight="bold", pad=14)
-    ax.text(0.04, 0.92, "\n".join(preview_lines) or "Report preview unavailable.", va="top", fontsize=11, family="sans-serif")
+    ax.add_patch(plt.Rectangle((0.02, 0.9), 0.96, 0.08, transform=ax.transAxes, color="#2f6f73", zorder=0))
+    ax.text(
+        0.5,
+        0.94,
+        "Demo Report Output Preview",
+        ha="center",
+        va="center",
+        fontsize=16,
+        weight="bold",
+        color="white",
+        transform=ax.transAxes,
+    )
+    ax.text(
+        0.05,
+        0.86,
+        preview_text,
+        va="top",
+        fontsize=10.5,
+        family="sans-serif",
+        linespacing=1.45,
+        transform=ax.transAxes,
+    )
     report_path = RESULT_ASSET_DIR / "demo_report_output.png"
     fig.savefig(report_path, dpi=180, bbox_inches="tight", facecolor="white")
     plt.close(fig)
     created.append(report_path)
+    _copy_asset(report_path)
+    (SCREENSHOT_OUTPUT_DIR / "results" / report_path.name).write_bytes(report_path.read_bytes())
 
     return created
 

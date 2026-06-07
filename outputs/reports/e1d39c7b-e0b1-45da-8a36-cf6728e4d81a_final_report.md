@@ -3,7 +3,7 @@
 **Final Course Project Report**  
 **Topic:** Multi-agent AI systems for trustworthy clinical decision support  
 **Mode:** Deterministic mock/offline mode  
-**Run ID:** `fac2bb74-0bac-41b2-919a-4d0e48598662`  
+**Run ID:** `e1d39c7b-e0b1-45da-8a36-cf6728e4d81a`  
 **Final quality score:** 93.1/100  
 **Confidence score:** 95.5/100
 
