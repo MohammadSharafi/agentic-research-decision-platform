@@ -8,6 +8,8 @@ The demo scenario is:
 
 The system runs fully offline in deterministic mock mode with real reference metadata, sample evidence, generated figures, Markdown/PDF reports, SQLite run memory, and a presentation artifact. Optional real search/model adapters can be added later without changing the agent contracts.
 
+![Streamlit control panel and Overview tab](report/assets/ui/ui_home.png)
+
 ## What The System Does
 
 Given a topic or decision scenario, the platform produces:
@@ -52,6 +54,12 @@ flowchart LR
 ```
 
 The workflow is not a simple chain. The Critic Agent can send the process back to research when evidence is weak, and the Evaluator Agent can send the process back to report writing when quality is below threshold.
+
+![Overall system architecture](report/assets/overall_system_architecture.png)
+
+![Multi-agent workflow with conditional revision loops](report/assets/multi_agent_workflow_diagram.png)
+
+![LangGraph state transitions](report/assets/langgraph_state_transition_diagram.png)
 
 ## Multi-Agent Workflow
 
@@ -125,6 +133,24 @@ streamlit run app/ui/streamlit_app.py
 ```
 
 **Tabs:** Overview | Workflow | Agents | Results | Figures | Downloads | About
+
+### Control panel (sidebar)
+
+The left sidebar is the main control panel: execution mode, demo topic, **Run Agentic Workflow**, quick instructions, and output paths.
+
+![Streamlit control panel with run settings and demo topic](report/assets/ui/ui_home.png)
+
+### Tab screenshots
+
+| Overview | Workflow | Agents |
+| --- | --- | --- |
+| ![Overview tab](report/assets/ui/ui_home.png) | ![Workflow tab](report/assets/ui/ui_workflow.png) | ![Agents tab](report/assets/ui/ui_agent_outputs.png) |
+
+| Results | Figures | Downloads |
+| --- | --- | --- |
+| ![Results tab](report/assets/ui/ui_results.png) | ![Figures tab](report/assets/ui/ui_figures.png) | ![Downloads tab](report/assets/ui/ui_downloads.png) |
+
+Screenshots are captured with Playwright after a seeded mock demo run. See [`docs/SCREENSHOT_GUIDE.md`](docs/SCREENSHOT_GUIDE.md).
 
 Capture real browser screenshots (Playwright) and demo result images:
 
@@ -216,6 +242,24 @@ Generated artifacts are saved in:
 - `report/final_report.pdf`
 - `presentation/final_presentation.md`
 - `presentation/final_presentation.pptx`
+
+### Generated figures
+
+| Agent communication | Evaluation pipeline | Report pipeline |
+| --- | --- | --- |
+| ![Agent communication diagram](report/assets/agent_communication_diagram.png) | ![Evaluation pipeline](report/assets/evaluation_pipeline_diagram.png) | ![Report generation pipeline](report/assets/report_generation_pipeline_diagram.png) |
+
+| Evidence by theme | Quality radar | Conceptual grounding |
+| --- | --- | --- |
+| ![Evidence by theme](report/assets/evidence_by_theme.png) | ![Quality radar chart](report/assets/quality_radar.png) | ![Conceptual grounding pipeline](report/assets/conceptual_grounding_pipeline.png) |
+
+### Demo run summaries
+
+| Evaluation score | Workflow result | Generated figures |
+| --- | --- | --- |
+| ![Demo evaluation score](report/assets/results/demo_evaluation_score.png) | ![Demo workflow result](report/assets/results/demo_agent_workflow_result.png) | ![Demo generated figures](report/assets/results/demo_generated_figures.png) |
+
+![Demo report output preview](report/assets/results/demo_report_output.png)
 
 ## Running With Real LLM/Search Mode
 
