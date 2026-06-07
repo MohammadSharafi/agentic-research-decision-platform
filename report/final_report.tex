@@ -55,9 +55,9 @@
 \begin{tabular}{ll}
 System mode: & Deterministic mock mode (\texttt{USE\_MOCK\_LLM=true})\\
 Primary stack: & Python, LangGraph, FastAPI, Streamlit, SQLite, Pytest\\
-Run ID: & \texttt{9247056d-51d0-422f-8123-046dd126a781}\\
+Run ID: & \texttt{517c5e12-4156-4fde-86cd-d0d208966afd}\\
 Final quality score: & 93.1/100\\
-Confidence score: & 95.5/100\\
+Confidence score: & 97.0/100\\
 \end{tabular}
 \vfill
 {\large University Final Project Submission\par}
@@ -202,7 +202,7 @@ def route_after_evaluator(state):
 Tools are small deterministic functions: \texttt{search\_tools} for mock or external retrieval, \texttt{citation\_tools} for markers, \texttt{visualization\_tools} for diagrams and charts, \texttt{latex\_report\_tools} for academic PDF compilation, and \texttt{file\_tools} for safe path handling. Agents remain orchestration-focused; tools encapsulate repeatable IO and formatting. This mirrors the tool-use pattern described in ReAct \cite{yao_2022_react}.
 
 \section{Retrieval and Citation Strategy}
-The offline corpus contains 21 references with DOI or official documentation URLs. Mock retrieval ranks sources by keyword overlap and credibility, yielding deterministic outputs for tests. The fact checker never invents citations; it only links claims to \texttt{Source} objects already present in state. Top evidence themes in the demo run were: evaluation (9), clinical (8), agentic (8), ethics (6), framework (5), risk (4), decision\_support (3), reporting (3).
+The offline corpus contains 12 references with DOI or official documentation URLs. Mock retrieval ranks sources by keyword overlap and credibility, yielding deterministic outputs for tests. The fact checker never invents citations; it only links claims to \texttt{Source} objects already present in state. Top evidence themes in the demo run were: clinical (8), evaluation (6), ethics (5), decision\_support (3), risk (3), reporting (3), agentic (2), framework (2).
 
 
 \begin{table}[H]
@@ -242,7 +242,7 @@ The Analyst aggregates weighted evidence signals into a confidence score:
 C = \frac{\sum_{i=1}^{n} w_i s_i}{\sum_{i=1}^{n} w_i}
 \label{eq:confidence}
 \end{equation}
-where $s_i$ is a quality signal (for example source credibility or coverage) and $w_i$ is its weight. The demo confidence score is 95.5/100, computed from credibility, citation coverage, and tag diversity.
+where $s_i$ is a quality signal (for example source credibility or coverage) and $w_i$ is its weight. The demo confidence score is 97.0/100, computed from credibility, citation coverage, and tag diversity.
 
 The Evaluator combines rubric dimensions into an overall quality score:
 \begin{equation}
@@ -464,7 +464,7 @@ Total & 93.1 \\
 
 
 \section{Results}
-The final mock run retrieved 21 sources, generated 14 figures, compiled a LaTeX PDF, produced a presentation, and saved evaluation JSON/Markdown under \texttt{outputs/evaluation/}. The final quality score was 93.1/100. Figure~\ref{fig:evidence-theme} shows corpus theme distribution; Figure~\ref{fig:quality-radar} summarizes rubric dimensions.
+The final mock run retrieved 12 sources, generated 14 figures, compiled a LaTeX PDF, produced a presentation, and saved evaluation JSON/Markdown under \texttt{outputs/evaluation/}. The final quality score was 93.1/100. Figure~\ref{fig:evidence-theme} shows corpus theme distribution; Figure~\ref{fig:quality-radar} summarizes rubric dimensions.
 
 
 \begin{figure}[H]
