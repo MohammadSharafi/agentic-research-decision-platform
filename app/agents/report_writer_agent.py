@@ -6,9 +6,9 @@ from app.config.settings import PROJECT_DIR, get_settings
 from app.models.schemas import WorkflowState
 from app.tools.citation_tools import numbered_references
 from app.tools.file_tools import copy_file, ensure_dir, write_text
-from app.ui.ui_helpers import REQUIRED_RESULT_IMAGES, REQUIRED_UI_SCREENSHOTS
-from app.tools.latex_report_tools import generate_latex_report
+from app.tools.latex_report_v2 import generate_latex_report
 from app.tools.report_tools import markdown_table, markdown_to_simple_pdf
+from app.ui.ui_helpers import REQUIRED_RESULT_IMAGES, REQUIRED_UI_SCREENSHOTS
 
 
 class ReportWriterAgent:
@@ -28,6 +28,7 @@ class ReportWriterAgent:
         self._sync_screenshot_assets(report_dir)
         if not references_path.exists() or references_path.read_text(encoding="utf-8").count("@") < 20:
             write_text(references_path, self._build_bibtex(state))
+
         run_pdf = report_dir / f"{state.run_id}_final_report.pdf"
         _, latex_pdf, latex_ok, latex_message = generate_latex_report(state, PROJECT_DIR / "report", run_pdf)
         if latex_ok:
@@ -39,7 +40,12 @@ class ReportWriterAgent:
         state.report_path = str(report_path)
         state.report_pdf_path = str(run_pdf)
         state.status = "reported"
-        state.add_note(self.name, f"Wrote final report to {report_path} and PDF to {run_pdf}.", latex_pdf=latex_ok, latex_message=latex_message)
+        state.add_note(
+            self.name,
+            f"Wrote expanded Markdown report to {report_path} and robust LaTeX/PDF report to {run_pdf}.",
+            latex_pdf=latex_ok,
+            latex_message=latex_message,
+        )
         return state
 
     def _build_report(self, state: WorkflowState) -> str:
@@ -59,33 +65,19 @@ class ReportWriterAgent:
         for check in state.claim_checks:
             citations = "; ".join(check.citations) if check.citations else "not supported by retrieved sources"
             status = "Supported" if check.supported else "Unsupported"
-            claim_lines.append(f"- **{status}:** {check.claim} {citations}. {check.note}")
+            claim_lines.append(f"- **{status}:** {check.claim} — {citations}. {check.note}")
 
-        critique = "\n".join(f"- {item}" for item in state.critique)
-        formulas = state.analysis.get("formulas", [])
+        critique = "\n".join(f"- {item}" for item in state.critique) or "- No critique notes were recorded."
         references = numbered_references(state.sources)
         confidence = state.analysis.get("confidence_score", 0)
-        source_count = state.analysis.get("source_count", 0)
-        task_formula = formulas[0] if formulas else r"T = \{t_1, t_2, ..., t_n\}"
-        confidence_formula = (
-            formulas[1]
-            if len(formulas) > 1
-            else r"C = \frac{\sum_{i=1}^{n} w_i s_i}{\sum_{i=1}^{n} w_i}"
-        )
-        evaluation_formula = (
-            formulas[2]
-            if len(formulas) > 2
-            else r"Q = \alpha F + \beta R + \gamma S + \delta C"
-        )
-        agent_table = table_blocks[0] if len(table_blocks) > 0 else ""
-        framework_table = table_blocks[1] if len(table_blocks) > 1 else ""
-        api_table = table_blocks[2] if len(table_blocks) > 2 else ""
-        rubric_table = table_blocks[3] if len(table_blocks) > 3 else ""
-        limitations_table = table_blocks[4] if len(table_blocks) > 4 else ""
-        evaluation_table = table_blocks[5] if len(table_blocks) > 5 else ""
+        source_count = state.analysis.get("source_count", len(state.sources))
         eval_score = state.evaluation.total
-        claim_check_text = "\n".join(claim_lines)
-        figure_text = "\n".join(figure_lines)
+        tag_counts = state.analysis.get("tag_counts", {})
+        top_tags = ", ".join(f"{k} ({v})" for k, v in sorted(tag_counts.items(), key=lambda x: x[1], reverse=True)[:8]) or "not available"
+
+        all_tables = "\n\n".join(table_blocks)
+        figure_text = "\n\n".join(figure_lines)
+        claim_check_text = "\n".join(claim_lines) or "- No claim checks were recorded."
 
         return f"""# Agentic Research & Decision Intelligence Platform
 
@@ -98,224 +90,134 @@ class ReportWriterAgent:
 
 ## Abstract
 
-This report documents the Agentic Research & Decision Intelligence Platform, a multi-agent system that transforms a complex research query into an evidence-grounded academic report, figures, evaluation artifacts, and presentation. Ten specialized agents plan, retrieve, analyze, critique, verify, visualize, write, evaluate, present, and persist results through typed `WorkflowState` and conditional LangGraph routing. The default path is fully reproducible via `USE_MOCK_LLM=true`, a local corpus of verified references, Pytest coverage, and one-command demo scripts.
+This report documents a complete multi-agent research and decision-intelligence platform. The system converts a broad topic into a reproducible workflow: planning, evidence retrieval, analysis, critique, fact-checking, visualization, report generation, evaluation, presentation export, and persistent memory. The revised report emphasizes mathematical formulation, conditional algorithms, readable tables, correctly scaled figures, panel screenshots, and reproducible demo commands.
 
-## 1. Introduction
+## 1. Problem Definition
 
-Research and decision-support tasks require inspectable planning, retrieval, critique, and citation grounding—not only fluent prose. This project implements a multi-agent platform for trustworthy clinical decision support as a demanding demonstration scenario.
+Single-prompt systems hide too many decisions. A serious research assistant should expose the task plan, retrieved evidence, intermediate tables, critique, claim checks, visual artifacts, evaluation scores, and final downloads. This project implements that inspectable workflow using specialized agents and shared workflow state.
 
-## 2. Problem Statement
+## 2. System Overview
 
-Given a broad topic, the system must produce a professional evidence-grounded report and presentation with task decomposition, ranked retrieval, critique loops, claim checks, figures, LaTeX/PDF output, rubric evaluation, and persistent memory—without paid API keys in the grading path.
+The platform has five layers: Streamlit UI, FastAPI backend, graph orchestration, agent/tool layer, and SQLite plus filesystem persistence. The default mock mode keeps the project deterministic for grading while preserving extension points for external search and model providers.
 
-## 3. Motivation
+## 3. Agentic Architecture
 
-Clinical decision support illustrates high-stakes requirements: workflow fit, governance, and hallucination risk control matter as much as model fluency.
+Ten agents collaborate through typed `WorkflowState`: Planner, Research, Analyst, Critic, Fact-Checker, Visualization, Report Writer, Evaluator, Presentation, and Memory. Each agent owns one responsibility, which makes the system easier to test, explain, and present.
 
-## 4. Related Work
-
-The design draws on retrieval-augmented generation, ReAct-style tool use, Reflexion/Self-Refine critique loops, multi-agent frameworks (LangGraph, AutoGen, CrewAI, Semantic Kernel, Google ADK), and clinical AI reporting guidance (CONSORT-AI, SPIRIT-AI, DECIDE-AI).
-
-## 5. System Overview
-
-Five layers: Streamlit/FastAPI interfaces, graph orchestration, specialized agents, tool adapters, and SQLite/filesystem outputs.
-
-{figure_lines[0] if len(figure_lines) > 0 else ""}
-
-## 6. Multi-Agent Architecture
-
-Ten agents collaborate through `WorkflowState`. Figure below shows shared-state communication.
-
-{figure_lines[2] if len(figure_lines) > 2 else ""}
-
-{agent_table}
-
-## 7. Agent Roles and Responsibilities
-
-Planner decomposes; Research retrieves; Analyst structures metrics; Critic challenges evidence; Fact-Checker grounds claims; Visualization renders diagrams; Report Writer compiles Markdown/LaTeX/PDF; Evaluator scores rubric; Presentation produces slides; Memory persists runs.
-
-## 8. LangGraph Workflow Design
-
-Conditional edges enable research revision and report revision loops.
-
-{figure_lines[1] if len(figure_lines) > 1 else ""}
-
-{figure_lines[3] if len(figure_lines) > 3 else ""}
-
-## 9. Agentic Behavior and Conditional Routing
-
-`route_after_critic` returns `research` when evidence is weak; `route_after_evaluator` returns `report` when quality score Q < τ (τ = 78).
-
-## 10. State Management and Memory
-
-Serializable `WorkflowState` and SQLite run records support API inspection via `GET /runs/{{run_id}}` without hidden cross-run prompt conditioning.
-
-## 11. Tool-Use Design
-
-Deterministic tools handle search, citations, visualization, LaTeX compilation, and safe file IO. Agents remain orchestration-focused.
-
-## 12. Retrieval and Citation Strategy
-
-The mock corpus contains **{source_count}** references. Retrieval ranks by keyword overlap and credibility; the fact checker uses only sources already in state.
-
-## 13. Mathematical Formulation
+## 4. Mathematical Formulation
 
 Task decomposition:
 
 ```latex
-{task_formula}
+T = \{t_1,t_2,\ldots,t_n\}
 ```
 
 Weighted confidence:
 
 ```latex
-{confidence_formula}
+C = \frac{\sum_{i=1}^{n} w_i s_i}{\sum_{i=1}^{n} w_i}
 ```
 
-Overall quality (demo confidence: **{confidence}/100**):
+Quality score:
 
 ```latex
-{evaluation_formula}
+Q = \alpha F + \beta R + \gamma K + \delta S + \epsilon V + \zeta P
 ```
 
-Revision decision:
+Revision gate:
 
 ```latex
-r = \\begin{{cases}} 1, & Q < \\tau \\\\ 0, & Q \\geq \\tau \\end{{cases}}
+r = \begin{{cases}} 1, & Q < \tau \\ 0, & Q \geq \tau \end{{cases}}, \quad \tau = 78
 ```
 
-## 14. Implementation Details
+## 5. Algorithmic Workflow
 
-Python modules under `app/agents`, `app/graph`, `app/tools`, `app/models`, `app/storage`, `app/api`, and `app/ui`. LangGraph compiles when installed; fallback runner preserves routing semantics.
-
-## 15. FastAPI Backend Design
-
-{api_table}
-
-## 16. User Interface and Demonstration
-
-A polished Streamlit interface (`app/ui/streamlit_app.py`) provides a professor-friendly demo surface. Users enter a topic, select mock or real mode, launch the workflow, inspect agent cards, review rubric scores with progress bars, preview figures, and download PDF/Markdown reports, presentations, and evaluation files.
-
-**Tabs:** Overview | Workflow | Agents | Results | Figures | Downloads | About
-
-**Why the UI matters:** It makes multi-agent behavior inspectable during grading and live demonstration.
-
-**Launch:**
-
-```bash
-streamlit run app/ui/streamlit_app.py
+```text
+Input: query q, maximum revisions m
+state <- initialize WorkflowState(q)
+state.plan <- Planner(q)
+state.sources <- Research(state.plan)
+state.analysis <- Analyst(state.sources)
+state.critique <- Critic(state.analysis)
+if state.needs_revision and state.revision_count < m:
+    state.revision_count += 1
+    state.sources <- Research(state.critique)
+state.claim_checks <- FactChecker(state.sources, state.analysis)
+state.figures <- Visualization(state)
+state.report <- ReportWriter(state)
+state.evaluation <- Evaluator(state.report)
+if state.evaluation.total < threshold and state.revision_count < m:
+    state.report <- ReportWriter(state)
+state.presentation <- Presentation(state.report)
+Memory.save(state)
+return state
 ```
 
-**Capture assets:**
+## 6. Evidence and Retrieval
 
-```bash
-python scripts/capture_ui_screenshots.py
-```
+The run retrieved **{source_count}** evidence sources. Top evidence themes: **{top_tags}**. The fact checker only grounds claims in retrieved sources and does not invent citations.
 
-![Actual Streamlit overview interface](assets/ui/ui_home.png)
+## 7. Tables
 
-![Workflow tab with pipeline timeline](assets/ui/ui_workflow.png)
+The LaTeX report now uses `tabularx`, `adjustbox`, smaller padding, and increased row spacing so text in tables does not overlap.
 
-![Agents tab with agent output cards](assets/ui/ui_agent_outputs.png)
+{all_tables}
 
-![Results tab with evaluation breakdown](assets/ui/ui_results.png)
+## 8. Figures and Images
 
-![Figures tab gallery preview](assets/ui/ui_figures.png)
-
-![Downloads tab with artifact download buttons](assets/ui/ui_downloads.png)
-
-**Demo result summaries** (generated from the mock workflow run):
-
-![Demo evaluation score summary](assets/results/demo_evaluation_score.png)
-
-![Demo workflow result summary](assets/results/demo_agent_workflow_result.png)
-
-![Demo generated figures preview](assets/results/demo_generated_figures.png)
-
-![Demo report output preview](assets/results/demo_report_output.png)
-
-Mock mode uses a local deterministic corpus. The clinical demo is academic only and not medical advice. See `report/assets/ui/capture_metadata.json` for whether UI images are browser captures or fallback documentation renders.
-
-## 17. Report Generation Pipeline
-
-{figure_lines[4] if len(figure_lines) > 4 else ""}
-
-Canonical outputs: `report/final_report.tex`, `report/final_report.pdf`, `report/final_report.md`. Build PDF with `python scripts/build_report_pdf.py`.
-
-## 18. Evaluation Methodology
-
-{figure_lines[5] if len(figure_lines) > 5 else ""}
-
-{rubric_table}
-
-{evaluation_table}
-
-## 19. Results
-
-Retrieved **{source_count}** sources, generated **{len(state.figures)}** figures, final score **{eval_score}/100**.
-
-{figure_lines[6] if len(figure_lines) > 6 else ""}
-
-{figure_lines[7] if len(figure_lines) > 7 else ""}
-
-## 20. Testing and Reproducibility
-
-Run `python -m compileall app scripts`, `python scripts/run_demo.py`, `python scripts/build_report_pdf.py`, and `pytest -v`.
-
-## 21. Error Analysis
-
-Expected errors: stale evidence, incomplete retrieval, weak claim alignment, overconfident clinical wording. Mitigations: critique loops, claim checks, limitations, evaluator thresholds, human review.
-
-## 22. Limitations
-
-{limitations_table}
-
-## AI-Assisted Development Disclosure
-
-This submission was developed with external AI engineering assistants used transparently as development aids—not as unsupervised authors. The student defined requirements, directed architecture, reviewed outputs, ran tests, and prepared final deliverables.
-
-| Tool | Purpose | Human Oversight |
-| --- | --- | --- |
-| ChatGPT | Planning, architecture, documentation, prompt engineering | Student reviewed and refined outputs |
-| Codex-style assistant | Code generation, tests, scripts, docs | Student tested and validated implementation |
-| Cursor AI | Refactoring, report polishing, LaTeX improvement | Student supervised edits and verified behavior |
-| NotebookLM | Presentation drafting and speaker notes | Student reviewed and adapted slides |
-
-**Development AI vs. project AI:** External tools helped *build* the repository. The implemented platform also contains **internal runtime agents** (Planner, Research, Analyst, Critic, Fact-Checker, Visualization, Report Writer, Evaluator, Presentation, Memory) orchestrated at execution time. See `docs/AI_USAGE_GUIDE.md` and `docs/AI_GUIDE.md`.
-
-> AI tools were used as development assistants. The student directed the project requirements, reviewed the generated outputs, tested the system, selected the architecture, validated the deliverables, and prepared the final submission.
-
-## 23. Ethical Considerations
-
-Not a medical device. No patient-specific diagnosis. Requires governance, PHI controls, and clinician responsibility in any real deployment.
-
-## 24. Future Work
-
-Live retrieval, vector stores, entailment-based fact checking, human-in-the-loop approval, async jobs, and formal clinical evaluation.
-
-## 25. Conclusion
-
-The platform demonstrates graph-based multi-agent orchestration producing transparent, evidence-grounded academic deliverables suitable for university evaluation.
-
-## 26. Framework Comparison
-
-{framework_table}
-
-## 27. Claim Checks
-
-{claim_check_text}
-
-## 28. Figures Appendix
+The LaTeX report now constrains every figure using `keepaspectratio` and a maximum height so diagrams and screenshots do not overflow or distort.
 
 {figure_text}
 
-## Critic Notes
+## 9. UI Panel Screenshots
+
+The report expects current screenshots under `report/assets/ui/`. Regenerate them after UI edits:
+
+```bash
+python scripts/capture_ui_screenshots.py
+python scripts/build_report_pdf.py
+```
+
+Included panel assets:
+
+- `assets/ui/ui_home.png`
+- `assets/ui/ui_workflow.png`
+- `assets/ui/ui_agent_outputs.png`
+- `assets/ui/ui_results.png`
+- `assets/ui/ui_figures.png`
+- `assets/ui/ui_downloads.png`
+
+## 10. Evaluation
+
+Final quality score: **{eval_score}/100**. Confidence score: **{confidence}/100**. The evaluation measures artifact quality, not production validity.
+
+## 11. Claim Checks
+
+{claim_check_text}
+
+## 12. Critic Notes
 
 {critique}
 
-## References
+## 13. Reproducibility
 
-See `report/references.bib` for BibTeX entries. Retrieved sources in this run:
+```bash
+source .venv/bin/activate
+export USE_MOCK_LLM=true
+python scripts/capture_ui_screenshots.py
+python scripts/build_report_pdf.py
+streamlit run app/ui/streamlit_app.py
+```
+
+## 14. Limitations
+
+This is a research prototype. It demonstrates architecture, reproducibility, and evidence-grounded workflow behavior. Live retrieval, stronger entailment checking, human approval gates, and formal domain evaluation are future work.
+
+## 15. Conclusion
+
+The project demonstrates a reproducible and inspectable agentic research workflow. The updated report generator now produces a fuller academic report with robust tables, constrained figures, mathematical formulation, algorithmic pseudocode, UI screenshots, and clearer explanations.
+
+## References
 
 {references}
 """
