@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import html
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -17,7 +18,6 @@ from app.ui.ui_helpers import (
     DEMO_TOPICS,
     EVALUATION_THRESHOLD,
     ROUTING_NOTES,
-    TAB_NAMES,
     WORKFLOW_PIPELINE,
     agent_output_cards,
     artifact_status,
@@ -30,6 +30,7 @@ from app.ui.ui_helpers import (
     resolve_report_path,
     resolve_report_pdf_path,
     figure_caption,
+    safe_read_text,
     screenshot_seed_enabled,
 )
 
@@ -41,7 +42,7 @@ st.markdown(
 :root { --bg:#f8fafc; --panel:#ffffff; --text:#0f172a; --muted:#475569; --line:#cbd5e1; --brand:#0f766e; --accent:#ef4444; }
 html, body, .stApp, [data-testid="stAppViewContainer"] { background:var(--bg)!important; color:var(--text)!important; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Arial,sans-serif!important; letter-spacing:0!important; }
 [data-testid="stHeader"] { background:var(--bg)!important; }
-.block-container { max-width:1120px; padding-top:1.1rem; padding-bottom:2rem; }
+.block-container { max-width:1180px; padding-top:1.1rem; padding-bottom:2rem; }
 h1,h2,h3,h4,h5,h6,p,li,label,span,div { letter-spacing:0!important; }
 [data-testid="stSidebar"] { background:#eef2f7!important; border-right:1px solid #dbe4ea!important; }
 [data-testid="stSidebar"] * { color:var(--text)!important; }
@@ -79,6 +80,10 @@ div[data-testid="stDownloadButton"] button:hover { background:#f1f5f9!important;
 .card { background:var(--panel)!important; color:var(--text)!important; border:1px solid #dbe4ea; border-radius:16px; padding:1rem; margin-bottom:.85rem; box-shadow:0 8px 26px rgba(15,23,42,.055); overflow:hidden; }
 .card * { color:var(--text)!important; }
 .card p { color:var(--muted)!important; line-height:1.55; margin:.25rem 0; }
+.answer-card { background:#ffffff!important; border:1px solid #cbd5e1; border-radius:18px; padding:1.1rem 1.25rem; margin:1rem 0; box-shadow:0 10px 28px rgba(15,23,42,.06); }
+.answer-card h1, .answer-card h2, .answer-card h3 { color:#0f172a!important; }
+.answer-card p, .answer-card li { color:#334155!important; line-height:1.65!important; }
+.query-card { background:#f8fafc!important; border:1px dashed #94a3b8; border-radius:14px; padding:.85rem 1rem; margin:.75rem 0 1rem; }
 .metric { border-top:4px solid var(--brand); min-height:96px; }
 .metric-label { color:#64748b!important; font-size:.73rem; font-weight:900; text-transform:uppercase; }
 .metric-value { color:var(--text)!important; font-size:1.32rem; font-weight:900; line-height:1.15; word-break:break-word; }
@@ -126,8 +131,8 @@ def hero() -> None:
         """
 <div class="hero">
   <h1>Agentic Research & Decision Intelligence Platform</h1>
-  <p>A presentation-ready multi-agent system that turns one research topic into evidence, analysis, critique, fact-checks, figures, a report, a slide deck, evaluation scores, and saved memory.</p>
-  <span class="badge">✅ Mock demo ready</span><span class="badge">🧠 10 agents</span><span class="badge">🔁 Revision loops</span><span class="badge">📄 Report + PPTX</span>
+  <p>Ask a research, comparison, market, policy, or technical question and get the actual synthesized answer, sources, analysis, figures, score, and downloadable report.</p>
+  <span class="badge">✅ Answer-first UI</span><span class="badge">🧠 10 agents</span><span class="badge">🔁 Revision loops</span><span class="badge">📄 Report + PPTX</span>
 </div>
 """,
         unsafe_allow_html=True,
@@ -144,30 +149,43 @@ def seed_demo() -> None:
 
 def sidebar() -> tuple[str, bool] | None:
     settings = get_settings()
+    has_api_key = bool(settings.openai_api_key or settings.tavily_api_key or settings.serpapi_api_key)
+    default_mode_index = 1 if has_api_key else 0
+
     st.sidebar.markdown("## 🧠 Agentic Research")
-    st.sidebar.caption("Clean demo controls for your final-project presentation.")
+    st.sidebar.caption("Ask a question and review the actual generated answer first.")
     st.sidebar.divider()
     st.sidebar.markdown("### 1) Execution mode")
-    mode = st.sidebar.radio("Execution mode", ["Mock mode (deterministic)", "Real LLM mode (requires API keys)"], index=0, label_visibility="collapsed")
+    mode = st.sidebar.radio(
+        "Execution mode",
+        ["Mock mode (deterministic)", "Real LLM mode (uses configured API keys)"],
+        index=default_mode_index,
+        label_visibility="collapsed",
+    )
     use_mock = mode.startswith("Mock")
     if use_mock:
-        st.sidebar.success("Recommended: stable, offline, no API keys.")
-    elif settings.openai_api_key or settings.tavily_api_key or settings.serpapi_api_key:
-        st.sidebar.success("At least one API key is configured.")
+        st.sidebar.success("Mock mode: stable, offline, reproducible.")
+    elif has_api_key:
+        st.sidebar.success("Real mode: API key configured.")
     else:
-        st.sidebar.error("No API keys found in .env.")
+        st.sidebar.error("No API keys found in .env. Real mode may fall back or fail.")
     with st.sidebar.expander("API key status", expanded=not use_mock):
         st.write(f"OpenAI: **{key_state(settings.openai_api_key)}**")
         st.write(f"Tavily: **{key_state(settings.tavily_api_key)}**")
         st.write(f"SerpAPI: **{key_state(settings.serpapi_api_key)}**")
-    st.sidebar.markdown("### 2) Demo topic")
-    topic = st.sidebar.selectbox("Preset topic", list(DEMO_TOPICS.keys()))
-    query = st.sidebar.text_area("Research or decision topic", value=DEMO_TOPICS[topic], height=120)
+
+    st.sidebar.markdown("### 2) Question")
+    topic = st.sidebar.selectbox("Preset topic", ["Custom question"] + list(DEMO_TOPICS.keys()))
+    default_query = "Compare gold and silver prices, drivers, risks, and investment use cases."
+    if topic != "Custom question":
+        default_query = DEMO_TOPICS[topic]
+    query = st.sidebar.text_area("Research, comparison, or decision question", value=default_query, height=145)
+
     st.sidebar.markdown("### 3) Run")
-    clicked = st.sidebar.button("🚀 Run Agentic Workflow", type="primary", use_container_width=True)
+    clicked = st.sidebar.button("🚀 Generate Answer", type="primary", use_container_width=True)
     st.sidebar.divider()
-    st.sidebar.markdown("### Presentation path")
-    st.sidebar.markdown("1. Overview\n2. Workflow\n3. Agents\n4. Results\n5. Figures\n6. Downloads")
+    st.sidebar.markdown("### Review order")
+    st.sidebar.markdown("1. Answer\n2. Evidence\n3. Analysis\n4. Figures\n5. Score\n6. Downloads\n7. Workflow\n8. Agents")
     with st.sidebar.expander("Output directory"):
         st.code(str(get_output_dir()), language="text")
     if clicked:
@@ -177,7 +195,7 @@ def sidebar() -> tuple[str, bool] | None:
 
 def run_ui(query: str, use_mock: bool) -> None:
     try:
-        with st.status("Running 10-agent workflow...", expanded=True) as status:
+        with st.status("Running agentic answer workflow...", expanded=True) as status:
             progress = st.progress(0, text="Starting...")
             state = run_workflow(query, use_mock_llm=use_mock)
             for idx, (name, icon, desc) in enumerate(WORKFLOW_PIPELINE, start=1):
@@ -192,55 +210,132 @@ def run_ui(query: str, use_mock: bool) -> None:
 
 def status(state: Any | None) -> None:
     if not state:
-        st.markdown('<div class="notice">Start here: keep Mock mode selected, run the workflow, then present tabs left to right.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="notice">Start here: enter a comparison/research question, choose real mode if API keys are configured, then generate the answer.</div>', unsafe_allow_html=True)
     else:
-        st.markdown(f'<div class="success-box">✅ Workflow completed — Run ID: <code>{esc(state.run_id)}</code> | Score: <b>{esc(state.evaluation.total)}/100</b> | Status: <b>{esc(state.status)}</b></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="success-box">✅ Answer generated — Run ID: <code>{esc(state.run_id)}</code> | Score: <b>{esc(state.evaluation.total)}/100</b> | Status: <b>{esc(state.status)}</b></div>', unsafe_allow_html=True)
 
 
 def empty() -> None:
-    st.markdown('<div class="card" style="text-align:center;padding:2rem;border-style:dashed;"><h3>Ready for demo</h3><p>Choose Mock mode, keep the default topic, and run the workflow.</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="card" style="text-align:center;padding:2rem;border-style:dashed;"><h3>Ready for a question</h3><p>Enter a research or comparison prompt, then generate the answer.</p></div>', unsafe_allow_html=True)
 
 
-def overview(state: Any) -> None:
-    st.markdown('<div class="kicker">Presentation overview</div>', unsafe_allow_html=True)
-    st.subheader("What this project demonstrates")
-    card("Main idea", "A full multi-agent research pipeline: planning, evidence, critique, fact-checking, visualization, reporting, evaluation, and memory.", "🎯")
+def _clean_report_markdown(text: str, limit: int = 30000) -> str:
+    text = text[:limit]
+    text = re.sub(r"^#\s+Agentic Research.*?\n+", "", text, count=1, flags=re.IGNORECASE | re.DOTALL)
+    text = re.sub(r"!\[[^\]]*\]\([^\)]*\)", "", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip()
+
+
+def _analysis_summary(state: Any) -> str:
+    analysis = getattr(state, "analysis", {}) or {}
+    for key in ("final_answer", "answer", "summary", "synthesis", "executive_summary", "conclusion"):
+        value = analysis.get(key)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return ""
+
+
+def answer(state: Any) -> None:
+    st.markdown('<div class="kicker">Answer first</div>', unsafe_allow_html=True)
+    st.subheader("Final answer for your prompt")
+    st.markdown(f'<div class="query-card"><b>Question:</b><br>{esc(state.query)}</div>', unsafe_allow_html=True)
+
     c1, c2, c3, c4 = st.columns(4)
-    with c1: metric("Run", state.run_id[:8] + "…", "Saved trace")
-    with c2: metric("Sources", str(len(state.sources)), "Evidence items", "#0ea5e9")
+    with c1: metric("Score", f"{state.evaluation.total}/100", f"Threshold {EVALUATION_THRESHOLD}", "#22c55e")
+    with c2: metric("Sources", str(len(state.sources)), "Retrieved evidence", "#0ea5e9")
     with c3: metric("Figures", str(len(state.figures)), "Generated visuals", "#8b5cf6")
-    with c4: metric("Score", f"{state.evaluation.total}/100", f"Threshold {EVALUATION_THRESHOLD}", "#22c55e")
-    c5, c6, c7 = st.columns(3)
-    with c5: metric("Report", artifact_status(resolve_report_path(state)), "Markdown")
-    with c6: metric("PDF", artifact_status(resolve_report_pdf_path(state)), "Final report")
-    with c7: metric("Slides", artifact_status(resolve_presentation_path(state)), "Presentation")
+    with c4: metric("Mode", "Mock" if state.use_mock_llm else "Real", "Execution path", "#f97316")
+
+    report = resolve_report_path(state)
+    summary = _analysis_summary(state)
+    if summary:
+        st.markdown("### Synthesized answer")
+        st.markdown(f'<div class="answer-card">{esc(summary)}</div>', unsafe_allow_html=True)
+
+    if report:
+        st.markdown("### Generated report content")
+        report_text = _clean_report_markdown(safe_read_text(report, limit=35000))
+        if report_text:
+            st.markdown('<div class="answer-card">', unsafe_allow_html=True)
+            st.markdown(report_text)
+            st.markdown('</div>', unsafe_allow_html=True)
+        else:
+            st.info("Report file exists, but no readable content was found.")
+    elif not summary:
+        st.warning("No generated report or answer summary was found for this run yet.")
+
+    if state.tables:
+        st.markdown("### Key structured outputs")
+        for idx, table in enumerate(state.tables[:2], start=1):
+            with st.expander(f"Table {idx}: {table.title}", expanded=idx == 1):
+                st.dataframe({col: [row[i] if i < len(row) else "" for row in table.rows] for i, col in enumerate(table.columns)}, use_container_width=True)
+
+
+def evidence(state: Any) -> None:
+    st.markdown('<div class="kicker">Evidence used</div>', unsafe_allow_html=True)
+    st.subheader("Sources and claim grounding")
+    if not state.sources:
+        st.warning("No sources were attached to this run.")
+    for idx, source in enumerate(state.sources, start=1):
+        with st.expander(f"{idx}. {source.title}", expanded=idx <= 3):
+            st.write(f"**Type:** {source.source_type}")
+            st.write(f"**Year:** {source.year or 'n.d.'}")
+            st.write(f"**Credibility:** {source.credibility}")
+            if source.tags:
+                st.write(f"**Tags:** {', '.join(source.tags)}")
+            st.write(source.summary)
+            if source.url:
+                st.write(source.url)
+
+    if state.claim_checks:
+        st.markdown("### Claim checks")
+        for check in state.claim_checks:
+            label = "Supported" if check.supported else "Unsupported / needs caution"
+            st.write(f"**{label}:** {check.claim}")
+            if check.citations:
+                st.caption("Citations: " + ", ".join(check.citations))
+            if check.note:
+                st.caption(check.note)
+
+
+def analysis(state: Any) -> None:
+    st.markdown('<div class="kicker">Analysis outputs</div>', unsafe_allow_html=True)
+    st.subheader("Tables, metrics, and structured analysis")
+    if not state.tables:
+        st.warning("No analysis tables were generated.")
+        return
+    for idx, table in enumerate(state.tables, start=1):
+        with st.expander(f"{idx}. {table.title}", expanded=idx <= 2):
+            data = {col: [row[i] if i < len(row) else "" for row in table.rows] for i, col in enumerate(table.columns)}
+            st.dataframe(data, use_container_width=True, hide_index=True)
 
 
 def workflow(state: Any) -> None:
-    st.markdown('<div class="kicker">Agentic control flow</div>', unsafe_allow_html=True)
-    st.subheader("Workflow with conditional revision loops")
+    st.markdown('<div class="kicker">Workflow details</div>', unsafe_allow_html=True)
+    st.subheader("How the answer was produced")
     left, right = st.columns(2)
     for idx, (name, icon, desc) in enumerate(WORKFLOW_PIPELINE, start=1):
         with (left if idx % 2 else right):
             st.markdown(f'<div class="card stage"><div class="num">{idx}</div><div><h4>{esc(icon)} {esc(name)}</h4><p>{esc(desc)}</p></div></div>', unsafe_allow_html=True)
     for note in ROUTING_NOTES:
         st.markdown(f'<div class="notice">{esc(note)}</div>', unsafe_allow_html=True)
-    with st.expander("Execution plan for this run", expanded=True):
+    with st.expander("Execution plan for this run", expanded=False):
         for step in state.plan:
             st.markdown(f"- **{esc(step.agent)}:** {esc(step.description)}")
 
 
 def agents(state: Any) -> None:
-    st.markdown('<div class="kicker">Intermediate outputs</div>', unsafe_allow_html=True)
-    st.subheader("Agents: who did what")
+    st.markdown('<div class="kicker">Agent logs</div>', unsafe_allow_html=True)
+    st.subheader("Agent execution details")
     for idx, item in enumerate(agent_output_cards(state), start=1):
-        with st.expander(f"{idx}. {item['icon']} {item['label']} — {item['role']}", expanded=idx <= 3):
+        with st.expander(f"{idx}. {item['icon']} {item['label']} — {item['role']}", expanded=False):
             st.markdown(f'<div class="card"><span class="status-pill">{esc(item["status"])}</span><h4>{esc(item["label"])}</h4><p><b>Role:</b> {esc(item["role"])}</p><p><b>Output:</b> {esc(item["content"])}</p></div>', unsafe_allow_html=True)
 
 
 def results(state: Any) -> None:
-    st.markdown('<div class="kicker">Quality evaluation</div>', unsafe_allow_html=True)
-    st.subheader("Results and grading score")
+    st.markdown('<div class="kicker">Quality score</div>', unsafe_allow_html=True)
+    st.subheader("Evaluation and grading score")
     total = float(state.evaluation.total)
     verdict = "Passed" if total >= EVALUATION_THRESHOLD else "Needs revision"
     card("Quality verdict", f"{verdict}: total score is {total}/100 with threshold {EVALUATION_THRESHOLD}.", "✅")
@@ -251,7 +346,7 @@ def results(state: Any) -> None:
 
 
 def figures(state: Any) -> None:
-    st.markdown('<div class="kicker">Visual artifacts</div>', unsafe_allow_html=True)
+    st.markdown('<div class="kicker">Visual outputs</div>', unsafe_allow_html=True)
     st.subheader("Generated figures")
     paths = list_png_figures(state)
     if not paths:
@@ -289,14 +384,6 @@ def downloads(state: Any) -> None:
         dl("Evaluation Markdown", eval_md, "text/markdown", "evaluation Markdown")
 
 
-def about(_: Any | None = None) -> None:
-    st.markdown('<div class="kicker">Project defense</div>', unsafe_allow_html=True)
-    st.subheader("What to say if the professor asks")
-    card("Why it is agentic", "Specialized agents exchange typed workflow state, and the graph has revision loops.", "🧠")
-    card("Technology stack", "Python, LangGraph-compatible workflow, FastAPI, Streamlit, SQLite, Matplotlib, LaTeX, Pytest.", "🛠️")
-    card("Limitation", "The default demo uses a static mock corpus for reproducibility.", "⚠️")
-
-
 hero()
 seed_demo()
 request = sidebar()
@@ -304,10 +391,11 @@ if request:
     run_ui(*request)
 current_state = st.session_state.get("last_state")
 status(current_state)
-renderers = [overview, workflow, agents, results, figures, downloads, about]
-for tab, renderer in zip(st.tabs(TAB_NAMES), renderers):
+renderers = [answer, evidence, analysis, figures, results, downloads, workflow, agents]
+tab_names = ["Answer", "Evidence", "Analysis", "Figures", "Score", "Downloads", "Workflow", "Agents"]
+for tab, renderer in zip(st.tabs(tab_names), renderers):
     with tab:
-        if current_state or renderer is about:
+        if current_state:
             renderer(current_state)
         else:
             empty()
