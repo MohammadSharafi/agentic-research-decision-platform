@@ -45,12 +45,29 @@ html, body, .stApp, [data-testid="stAppViewContainer"] { background:var(--bg)!im
 h1,h2,h3,h4,h5,h6,p,li,label,span,div { letter-spacing:0!important; }
 [data-testid="stSidebar"] { background:#eef2f7!important; border-right:1px solid #dbe4ea!important; }
 [data-testid="stSidebar"] * { color:var(--text)!important; }
-/* force readable controls */
+
+/* Force readable Streamlit controls */
 div[data-baseweb="select"]>div, div[data-baseweb="base-input"], textarea, input { background:#fff!important; color:var(--text)!important; border-color:var(--line)!important; }
 div[data-baseweb="select"] *, div[data-baseweb="base-input"] *, textarea, input { color:var(--text)!important; }
 textarea::placeholder, input::placeholder { color:#64748b!important; opacity:1!important; }
 div[data-baseweb="popover"], div[role="listbox"], ul[role="listbox"], div[role="option"], div[role="option"] * { background:#fff!important; color:var(--text)!important; }
+
+/* Sidebar run button only */
 [data-testid="stSidebar"] .stButton>button { background:linear-gradient(135deg,#ef4444,#f97316)!important; color:white!important; border:0!important; border-radius:12px!important; font-weight:850!important; padding:.72rem 1rem!important; }
+[data-testid="stSidebar"] .stButton>button * { color:white!important; }
+
+/* Tabs: keep inactive tabs visible */
+div[data-baseweb="tab-list"] { gap:1rem!important; border-bottom:1px solid #e2e8f0!important; }
+button[data-baseweb="tab"] { background:transparent!important; opacity:1!important; color:#334155!important; padding:.65rem 0!important; }
+button[data-baseweb="tab"] p, button[data-baseweb="tab"] span, button[data-baseweb="tab"] div { color:#334155!important; font-weight:800!important; opacity:1!important; }
+button[data-baseweb="tab"][aria-selected="true"] p, button[data-baseweb="tab"][aria-selected="true"] span, button[data-baseweb="tab"][aria-selected="true"] div { color:var(--accent)!important; }
+button[data-baseweb="tab"][aria-selected="true"] { border-bottom:2px solid var(--accent)!important; }
+
+/* Download buttons: prevent black-on-black */
+div[data-testid="stDownloadButton"] button { background:#ffffff!important; color:#0f172a!important; border:1px solid #cbd5e1!important; border-radius:12px!important; font-weight:850!important; }
+div[data-testid="stDownloadButton"] button * { color:#0f172a!important; }
+div[data-testid="stDownloadButton"] button:hover { background:#f1f5f9!important; border-color:#94a3b8!important; }
+
 .hero { background:linear-gradient(135deg,#0f172a 0%,#155e75 58%,#0f766e 100%); color:white!important; border-radius:18px; padding:1.35rem 1.55rem; margin-bottom:1rem; box-shadow:0 16px 38px rgba(15,23,42,.18); }
 .hero * { color:white!important; }
 .hero h1 { margin:0 0 .35rem 0; font-size:1.85rem; line-height:1.15; font-weight:900; }
@@ -71,10 +88,8 @@ div[data-baseweb="popover"], div[role="listbox"], ul[role="listbox"], div[role="
 .kicker { color:var(--brand)!important; text-transform:uppercase; font-size:.75rem; font-weight:900; }
 .status-pill { float:right; background:#dcfce7; color:#166534!important; padding:.16rem .58rem; border-radius:999px; font-size:.74rem; font-weight:900; }
 .path { color:#64748b!important; font-size:.76rem; word-break:break-all; margin-top:.45rem; }
-div[data-testid="stTabs"] button p { font-weight:850!important; }
-div[data-testid="stTabs"] [aria-selected="true"] p { color:var(--accent)!important; }
 div[data-testid="stExpander"] { background:#fff!important; border:1px solid #dbe4ea!important; border-radius:14px!important; }
-.stDownloadButton>button, .stButton>button { border-radius:12px!important; font-weight:800!important; }
+.stButton>button { border-radius:12px!important; font-weight:800!important; }
 code { background:#e2e8f0!important; color:#0f172a!important; white-space:pre-wrap!important; word-break:break-word!important; }
 </style>
 """,
