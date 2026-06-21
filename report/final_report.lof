@@ -1,19 +1,19 @@
-\contentsline {figure}{\numberline {1}{\ignorespaces Overall system architecture connecting Streamlit, FastAPI, LangGraph, agents, tools, memory, and final outputs.}}{2}{figure.caption.4}%
-\contentsline {figure}{\numberline {2}{\ignorespaces Agent communication through shared structured state rather than hidden chat transcripts.}}{3}{figure.caption.5}%
-\contentsline {figure}{\numberline {3}{\ignorespaces Conditional multi-agent workflow with research revision and report evaluation loops.}}{4}{figure.caption.7}%
-\contentsline {figure}{\numberline {4}{\ignorespaces LangGraph state transition diagram showing how status values move through the graph.}}{5}{figure.caption.8}%
-\contentsline {figure}{\numberline {5}{\ignorespaces Actual Streamlit Overview tab captured in a headless browser after mock demo run.}}{9}{figure.caption.12}%
-\contentsline {figure}{\numberline {6}{\ignorespaces Actual Streamlit Workflow tab captured in a headless browser after mock demo run.}}{10}{figure.caption.13}%
-\contentsline {figure}{\numberline {7}{\ignorespaces Actual Streamlit Agents tab captured in a headless browser after mock demo run.}}{11}{figure.caption.14}%
-\contentsline {figure}{\numberline {8}{\ignorespaces Actual Streamlit Results tab captured in a headless browser after mock demo run.}}{12}{figure.caption.15}%
-\contentsline {figure}{\numberline {9}{\ignorespaces Actual Streamlit Figures tab captured in a headless browser after mock demo run.}}{13}{figure.caption.16}%
-\contentsline {figure}{\numberline {10}{\ignorespaces Actual Streamlit Downloads tab captured in a headless browser after mock demo run.}}{14}{figure.caption.17}%
-\contentsline {figure}{\numberline {11}{\ignorespaces Demo evaluation score summary generated from the mock workflow run.}}{14}{figure.caption.18}%
-\contentsline {figure}{\numberline {12}{\ignorespaces Demo workflow result summary showing agent stages and routing from the mock run.}}{15}{figure.caption.19}%
-\contentsline {figure}{\numberline {13}{\ignorespaces Demo figure gallery preview generated from workflow outputs.}}{15}{figure.caption.20}%
-\contentsline {figure}{\numberline {14}{\ignorespaces Demo report artifact preview showing generated Markdown and PDF deliverables.}}{16}{figure.caption.21}%
-\contentsline {figure}{\numberline {15}{\ignorespaces Report generation pipeline from retrieved sources to LaTeX/PDF and presentation artifacts.}}{17}{figure.caption.22}%
-\contentsline {figure}{\numberline {16}{\ignorespaces Evaluation pipeline with rubric scoring, thresholding, and revision routing.}}{18}{figure.caption.23}%
-\contentsline {figure}{\numberline {17}{\ignorespaces Evidence source distribution by theme from the deterministic demo corpus.}}{20}{figure.caption.26}%
-\contentsline {figure}{\numberline {18}{\ignorespaces Radar chart summarizing selected quality dimensions for the prototype output.}}{21}{figure.caption.27}%
-\contentsline {figure}{\numberline {19}{\ignorespaces Conceptual view of grounded synthesis from question to evidence-backed report.}}{24}{figure.caption.31}%
+\contentsline {figure}{\numberline {1}{\ignorespaces System architecture connecting UI, API, graph orchestration, specialized agents, tools, memory, and exported artifacts.}}{5}{figure.caption.4}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Conditional multi-agent workflow showing planning, retrieval, analysis, critique, fact-checking, report generation, evaluation, presentation, and memory.}}{5}{figure.caption.5}%
+\contentsline {figure}{\numberline {3}{\ignorespaces Agent communication through explicit shared WorkflowState fields rather than hidden ad-hoc messages.}}{6}{figure.caption.6}%
+\contentsline {figure}{\numberline {4}{\ignorespaces State transition diagram showing how workflow status values move through the graph.}}{6}{figure.caption.7}%
+\contentsline {figure}{\numberline {5}{\ignorespaces Report generation pipeline from evidence and tables to Markdown, LaTeX/PDF, presentation, and evaluation outputs.}}{7}{figure.caption.8}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Evaluation pipeline with rubric scoring, thresholding, and optional revision routing.}}{7}{figure.caption.9}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Evidence distribution by theme for the deterministic demonstration corpus.}}{8}{figure.caption.10}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Radar chart of selected quality dimensions for the generated artifact.}}{9}{figure.caption.11}%
+\contentsline {figure}{\numberline {9}{\ignorespaces Conceptual grounding pipeline from user question to evidence-backed synthesis.}}{10}{figure.caption.12}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Actual Streamlit Overview tab captured in a headless browser after mock demo run.}}{15}{figure.caption.20}%
+\contentsline {figure}{\numberline {11}{\ignorespaces Actual Streamlit Workflow tab captured in a headless browser after mock demo run.}}{15}{figure.caption.21}%
+\contentsline {figure}{\numberline {12}{\ignorespaces Actual Streamlit Agents tab captured in a headless browser after mock demo run.}}{16}{figure.caption.22}%
+\contentsline {figure}{\numberline {13}{\ignorespaces Actual Streamlit Results tab captured in a headless browser after mock demo run.}}{16}{figure.caption.23}%
+\contentsline {figure}{\numberline {14}{\ignorespaces Actual Streamlit Figures tab captured in a headless browser after mock demo run.}}{17}{figure.caption.24}%
+\contentsline {figure}{\numberline {15}{\ignorespaces Actual Streamlit Downloads tab captured in a headless browser after mock demo run.}}{17}{figure.caption.25}%
+\contentsline {figure}{\numberline {16}{\ignorespaces Demo evaluation score panel generated from the reproducible workflow run.}}{18}{figure.caption.26}%
+\contentsline {figure}{\numberline {17}{\ignorespaces Demo workflow result panel summarizing run ID, status, sources, figures, and agent sequence.}}{18}{figure.caption.27}%
+\contentsline {figure}{\numberline {18}{\ignorespaces Demo gallery of generated figures used by the final report.}}{19}{figure.caption.28}%
+\contentsline {figure}{\numberline {19}{\ignorespaces Demo report preview showing generated academic sections and run metadata.}}{19}{figure.caption.29}%

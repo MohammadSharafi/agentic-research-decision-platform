@@ -1,29 +1,24 @@
-\contentsline {section}{\numberline {1}Introduction}{1}{section.1}%
-\contentsline {section}{\numberline {2}Problem Statement}{1}{section.2}%
-\contentsline {section}{\numberline {3}Motivation}{1}{section.3}%
-\contentsline {section}{\numberline {4}Related Work}{1}{section.4}%
-\contentsline {section}{\numberline {5}System Overview}{1}{section.5}%
-\contentsline {section}{\numberline {6}Multi-Agent Architecture}{2}{section.6}%
-\contentsline {section}{\numberline {7}Agent Roles and Responsibilities}{3}{section.7}%
-\contentsline {section}{\numberline {8}LangGraph Workflow Design}{4}{section.8}%
-\contentsline {section}{\numberline {9}Agentic Behavior and Conditional Routing}{5}{section.9}%
-\contentsline {section}{\numberline {10}State Management and Memory}{6}{section.10}%
-\contentsline {section}{\numberline {11}Tool-Use Design}{6}{section.11}%
-\contentsline {section}{\numberline {12}Retrieval and Citation Strategy}{6}{section.12}%
-\contentsline {section}{\numberline {13}Mathematical Formulation}{7}{section.13}%
-\contentsline {section}{\numberline {14}Implementation Details}{7}{section.14}%
-\contentsline {section}{\numberline {15}FastAPI Backend Design}{7}{section.15}%
-\contentsline {section}{\numberline {16}User Interface and Demonstration}{8}{section.16}%
-\contentsline {section}{\numberline {17}Report Generation Pipeline}{16}{section.17}%
-\contentsline {section}{\numberline {18}Evaluation Methodology}{17}{section.18}%
-\contentsline {section}{\numberline {19}Results}{20}{section.19}%
-\contentsline {section}{\numberline {20}Testing and Reproducibility}{21}{section.20}%
-\contentsline {section}{\numberline {21}Error Analysis}{21}{section.21}%
+\contentsline {section}{\numberline {1}Executive Summary}{4}{section.1}%
+\contentsline {section}{\numberline {2}Research Question and Scope}{4}{section.2}%
+\contentsline {section}{\numberline {3}Background and Related Work}{4}{section.3}%
+\contentsline {section}{\numberline {4}System Requirements}{4}{section.4}%
+\contentsline {section}{\numberline {5}System Architecture}{4}{section.5}%
+\contentsline {section}{\numberline {6}Agent Responsibilities}{10}{section.6}%
+\contentsline {section}{\numberline {7}Workflow and State Model}{12}{section.7}%
+\contentsline {section}{\numberline {8}Mathematical Formulation}{12}{section.8}%
+\contentsline {section}{\numberline {9}Algorithmic Workflow}{13}{section.9}%
+\contentsline {section}{\numberline {10}Evidence and Citation Strategy}{13}{section.10}%
+\contentsline {section}{\numberline {11}Implementation Details}{14}{section.11}%
+\contentsline {section}{\numberline {12}API, Storage, and Artifacts}{14}{section.12}%
+\contentsline {section}{\numberline {13}User Interface and Panel Screenshots}{14}{section.13}%
+\contentsline {section}{\numberline {14}Report Generation and LaTeX Formatting}{20}{section.14}%
+\contentsline {section}{\numberline {15}Evaluation Methodology}{20}{section.15}%
+\contentsline {section}{\numberline {16}Results}{20}{section.16}%
+\contentsline {section}{\numberline {17}Claim Checks}{20}{section.17}%
+\contentsline {section}{\numberline {18}Critic Notes}{21}{section.18}%
+\contentsline {section}{\numberline {19}Error Analysis}{21}{section.19}%
+\contentsline {section}{\numberline {20}Ethical and Safety Considerations}{21}{section.20}%
+\contentsline {section}{\numberline {21}Testing and Reproducibility}{21}{section.21}%
 \contentsline {section}{\numberline {22}Limitations}{21}{section.22}%
-\contentsline {section}{\numberline {23}AI-Assisted Development Disclosure}{22}{section.23}%
-\contentsline {section}{\numberline {24}Ethical Considerations}{23}{section.24}%
-\contentsline {section}{\numberline {25}Future Work}{23}{section.25}%
-\contentsline {section}{\numberline {26}Conclusion}{23}{section.26}%
-\contentsline {section}{\numberline {A}Framework Comparison}{24}{appendix.A}%
-\contentsline {section}{\numberline {B}Conceptual Grounding Figure}{24}{appendix.B}%
-\contentsline {section}{\numberline {C}Claim Checks}{24}{appendix.C}%
+\contentsline {section}{\numberline {23}Future Work}{22}{section.23}%
+\contentsline {section}{\numberline {24}Conclusion}{22}{section.24}%

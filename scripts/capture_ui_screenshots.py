@@ -259,10 +259,10 @@ def capture_with_playwright(state, port: int = 8511) -> tuple[bool, str]:
                 page.wait_for_timeout(1600)
                 page.evaluate("window.scrollTo(0, 0)")
                 target = UI_ASSET_DIR / filename
-                page.screenshot(path=str(target), full_page=True)
+                page.screenshot(path=str(target), full_page=False)
                 _copy_asset(target)
             browser.close()
-        write_capture_metadata("browser", f"Captured current Streamlit UI with Playwright/Chromium on port {port} after seeded mock demo.")
+        write_capture_metadata("browser", f"Captured current Streamlit UI viewport with Playwright/Chromium on port {port} after seeded mock demo.")
         return True, f"Captured {len(SCREENSHOT_TAB_MAP)} browser screenshots via Playwright."
     except Exception as exc:
         return False, f"Playwright capture failed: {exc}"

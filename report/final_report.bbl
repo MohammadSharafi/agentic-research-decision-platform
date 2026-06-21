@@ -1,11 +1,18 @@
 \begin{thebibliography}{10}
 
 \bibitem{madaan_2023_self_refine}
-Prakhar Gupta-et~al. Aman~Madaan, Niket~Tandon.
+Prakhar Gupta et~al. Aman~Madaan, Niket~Tandon.
 \newblock Self-refine: Iterative refinement with self-feedback.
 \newblock 2023.
 \newblock Demonstrates iterative self-feedback and refinement for improving
   generated outputs without extra training.
+
+\bibitem{amershi_2019_seml}
+Saleema Amershi, Andrew Begel, Christian Bird, et~al.
+\newblock Software engineering for machine learning: A case study.
+\newblock 2019.
+\newblock Discusses testing, reproducibility, and engineering practices for
+  machine learning systems.
 
 \bibitem{garg_2005_cdss}
 Heather McDonald et~al. Amit X.~Garg, Neill K. J.~Adhikari.
@@ -41,6 +48,13 @@ Google.
 \newblock Agent development kit multi-agent systems documentation, 2026.
 \newblock Google ADK documentation for composing multiple agents into
   multi-agent systems.
+
+\bibitem{singhal_2023_medpalm}
+Tao Tu et~al. Karan~Singhal, Shekoofeh~Azizi.
+\newblock Large language models encode clinical knowledge.
+\newblock 2023.
+\newblock Evaluates large language models on medical question answering and
+  discusses opportunities and limitations for medicine.
 
 \bibitem{kawamoto_2005_cdss}
 E.~Andrew Balas David F.~Lobach Kensaku~Kawamoto, Caitlin A.~Houlihan.

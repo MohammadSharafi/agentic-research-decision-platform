@@ -79,7 +79,7 @@ class ReportWriterAgent:
         figure_text = "\n\n".join(figure_lines)
         claim_check_text = "\n".join(claim_lines) or "- No claim checks were recorded."
 
-        return f"""# Agentic Research & Decision Intelligence Platform
+        return rf"""# Agentic Research & Decision Intelligence Platform
 
 **Final Course Project Report**  
 **Topic:** {state.query}  
@@ -109,13 +109,13 @@ Ten agents collaborate through typed `WorkflowState`: Planner, Research, Analyst
 Task decomposition:
 
 ```latex
-T = \{t_1,t_2,\ldots,t_n\}
+T = \{{t_1,t_2,\ldots,t_n\}}
 ```
 
 Weighted confidence:
 
 ```latex
-C = \frac{\sum_{i=1}^{n} w_i s_i}{\sum_{i=1}^{n} w_i}
+C = \frac{{\sum_{{i=1}}^{{n}} w_i s_i}}{{\sum_{{i=1}}^{{n}} w_i}}
 ```
 
 Quality score:

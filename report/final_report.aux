@@ -2,149 +2,122 @@
 \providecommand\hyper@newdestlabel[2]{}
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
-\citation{lewis_2020_rag}
-\citation{yao_2022_react}
-\citation{garg_2005_cdss}
-\citation{kawamoto_2005_cdss}
-\citation{sutton_2020_cdss}
-\citation{ji_2023_hallucination_survey}
-\citation{bender_2021_stochastic_parrots}
-\citation{weng_2023_agents}
-\citation{langgraph_docs}
+\providecommand \oddpage@label [2]{}
 \citation{lewis_2020_rag}
 \citation{yao_2022_react}
 \citation{shinn_2023_reflexion}
 \citation{madaan_2023_self_refine}
-\citation{autogen_2023}
-\citation{crewai_docs}
-\citation{semantic_kernel_docs}
-\citation{google_adk_docs}
-\citation{liu_2020_consort_ai}
-\citation{rivera_2020_spirit_ai}
-\citation{vasey_2022_decide_ai}
 \citation{es_2023_ragas}
-\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {2}Problem Statement}{1}{section.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}Motivation}{1}{section.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}Related Work}{1}{section.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}System Overview}{1}{section.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Overall system architecture connecting Streamlit, FastAPI, LangGraph, agents, tools, memory, and final outputs.}}{2}{figure.caption.4}\protected@file@percent }
-\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{fig:overall-architecture}{{1}{2}{Overall system architecture connecting Streamlit, FastAPI, LangGraph, agents, tools, memory, and final outputs}{figure.caption.4}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Multi-Agent Architecture}{2}{section.6}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Agent communication through shared structured state rather than hidden chat transcripts.}}{3}{figure.caption.5}\protected@file@percent }
-\newlabel{fig:communication}{{2}{3}{Agent communication through shared structured state rather than hidden chat transcripts}{figure.caption.5}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Agent Roles}}{3}{table.caption.6}\protected@file@percent }
-\newlabel{tab:agents}{{1}{3}{Agent Roles}{table.caption.6}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {7}Agent Roles and Responsibilities}{3}{section.7}\protected@file@percent }
-\citation{langgraph_docs}
-\@writefile{toc}{\contentsline {section}{\numberline {8}LangGraph Workflow Design}{4}{section.8}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Conditional multi-agent workflow with research revision and report evaluation loops.}}{4}{figure.caption.7}\protected@file@percent }
-\newlabel{fig:workflow}{{3}{4}{Conditional multi-agent workflow with research revision and report evaluation loops}{figure.caption.7}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces LangGraph state transition diagram showing how status values move through the graph.}}{5}{figure.caption.8}\protected@file@percent }
-\newlabel{fig:state-transition}{{4}{5}{LangGraph state transition diagram showing how status values move through the graph}{figure.caption.8}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Conditional Routing Rules}}{5}{table.caption.9}\protected@file@percent }
-\newlabel{tab:routing}{{2}{5}{Conditional Routing Rules}{table.caption.9}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {9}Agentic Behavior and Conditional Routing}{5}{section.9}\protected@file@percent }
-\newlabel{lst:routing}{{1}{5}{Core conditional routing logic}{lstlisting.1}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}{\ignorespaces Core conditional routing logic}}{5}{lstlisting.1}\protected@file@percent }
-\citation{yao_2022_react}
-\@writefile{toc}{\contentsline {section}{\numberline {10}State Management and Memory}{6}{section.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {11}Tool-Use Design}{6}{section.11}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {12}Retrieval and Citation Strategy}{6}{section.12}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Sample of Retrieved Evidence Sources}}{6}{table.caption.10}\protected@file@percent }
-\newlabel{tab:source-profile}{{3}{6}{Sample of Retrieved Evidence Sources}{table.caption.10}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {13}Mathematical Formulation}{7}{section.13}\protected@file@percent }
-\newlabel{eq:decomposition}{{1}{7}{Mathematical Formulation}{equation.1}{}}
-\newlabel{eq:confidence}{{2}{7}{Mathematical Formulation}{equation.2}{}}
-\newlabel{eq:quality}{{3}{7}{Mathematical Formulation}{equation.3}{}}
-\newlabel{eq:revision}{{4}{7}{Mathematical Formulation}{equation.4}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {14}Implementation Details}{7}{section.14}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {15}FastAPI Backend Design}{7}{section.15}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces API Endpoints}}{8}{table.caption.11}\protected@file@percent }
-\newlabel{tab:api}{{4}{8}{API Endpoints}{table.caption.11}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {16}User Interface and Demonstration}{8}{section.16}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Actual Streamlit Overview tab captured in a headless browser after mock demo run.}}{9}{figure.caption.12}\protected@file@percent }
-\newlabel{fig:ui-home}{{5}{9}{Actual Streamlit Overview tab captured in a headless browser after mock demo run}{figure.caption.12}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Actual Streamlit Workflow tab captured in a headless browser after mock demo run.}}{10}{figure.caption.13}\protected@file@percent }
-\newlabel{fig:ui-workflow}{{6}{10}{Actual Streamlit Workflow tab captured in a headless browser after mock demo run}{figure.caption.13}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Actual Streamlit Agents tab captured in a headless browser after mock demo run.}}{11}{figure.caption.14}\protected@file@percent }
-\newlabel{fig:ui-outputs}{{7}{11}{Actual Streamlit Agents tab captured in a headless browser after mock demo run}{figure.caption.14}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Actual Streamlit Results tab captured in a headless browser after mock demo run.}}{12}{figure.caption.15}\protected@file@percent }
-\newlabel{fig:ui-results}{{8}{12}{Actual Streamlit Results tab captured in a headless browser after mock demo run}{figure.caption.15}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Actual Streamlit Figures tab captured in a headless browser after mock demo run.}}{13}{figure.caption.16}\protected@file@percent }
-\newlabel{fig:ui-figures-tab}{{9}{13}{Actual Streamlit Figures tab captured in a headless browser after mock demo run}{figure.caption.16}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Actual Streamlit Downloads tab captured in a headless browser after mock demo run.}}{14}{figure.caption.17}\protected@file@percent }
-\newlabel{fig:ui-downloads}{{10}{14}{Actual Streamlit Downloads tab captured in a headless browser after mock demo run}{figure.caption.17}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Demo evaluation score summary generated from the mock workflow run.}}{14}{figure.caption.18}\protected@file@percent }
-\newlabel{fig:demo-eval}{{11}{14}{Demo evaluation score summary generated from the mock workflow run}{figure.caption.18}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Demo workflow result summary showing agent stages and routing from the mock run.}}{15}{figure.caption.19}\protected@file@percent }
-\newlabel{fig:demo-workflow}{{12}{15}{Demo workflow result summary showing agent stages and routing from the mock run}{figure.caption.19}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces Demo figure gallery preview generated from workflow outputs.}}{15}{figure.caption.20}\protected@file@percent }
-\newlabel{fig:demo-figures}{{13}{15}{Demo figure gallery preview generated from workflow outputs}{figure.caption.20}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces Demo report artifact preview showing generated Markdown and PDF deliverables.}}{16}{figure.caption.21}\protected@file@percent }
-\newlabel{fig:demo-report}{{14}{16}{Demo report artifact preview showing generated Markdown and PDF deliverables}{figure.caption.21}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {17}Report Generation Pipeline}{16}{section.17}\protected@file@percent }
-\citation{es_2023_ragas}
-\@writefile{lof}{\contentsline {figure}{\numberline {15}{\ignorespaces Report generation pipeline from retrieved sources to LaTeX/PDF and presentation artifacts.}}{17}{figure.caption.22}\protected@file@percent }
-\newlabel{fig:report-pipeline}{{15}{17}{Report generation pipeline from retrieved sources to LaTeX/PDF and presentation artifacts}{figure.caption.22}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {18}Evaluation Methodology}{17}{section.18}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {16}{\ignorespaces Evaluation pipeline with rubric scoring, thresholding, and revision routing.}}{18}{figure.caption.23}\protected@file@percent }
-\newlabel{fig:evaluation-pipeline}{{16}{18}{Evaluation pipeline with rubric scoring, thresholding, and revision routing}{figure.caption.23}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Evaluation Rubric}}{19}{table.caption.24}\protected@file@percent }
-\newlabel{tab:rubric}{{5}{19}{Evaluation Rubric}{table.caption.24}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Final Evaluation Scores}}{20}{table.caption.25}\protected@file@percent }
-\newlabel{tab:evaluation-results}{{6}{20}{Final Evaluation Scores}{table.caption.25}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {19}Results}{20}{section.19}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {17}{\ignorespaces Evidence source distribution by theme from the deterministic demo corpus.}}{20}{figure.caption.26}\protected@file@percent }
-\newlabel{fig:evidence-theme}{{17}{20}{Evidence source distribution by theme from the deterministic demo corpus}{figure.caption.26}{}}
-\citation{pytest_docs}
+\citation{sutton_2020_cdss}
 \citation{ji_2023_hallucination_survey}
-\citation{who_2021_ai_health}
-\@writefile{lof}{\contentsline {figure}{\numberline {18}{\ignorespaces Radar chart summarizing selected quality dimensions for the prototype output.}}{21}{figure.caption.27}\protected@file@percent }
-\newlabel{fig:quality-radar}{{18}{21}{Radar chart summarizing selected quality dimensions for the prototype output}{figure.caption.27}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {20}Testing and Reproducibility}{21}{section.20}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {21}Error Analysis}{21}{section.21}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {1}Executive Summary}{4}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Research Question and Scope}{4}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Background and Related Work}{4}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}System Requirements}{4}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}System Architecture}{4}{section.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces System architecture connecting UI, API, graph orchestration, specialized agents, tools, memory, and exported artifacts.}}{5}{figure.caption.4}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:overall-architecture}{{1}{5}{System architecture connecting UI, API, graph orchestration, specialized agents, tools, memory, and exported artifacts}{figure.caption.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Conditional multi-agent workflow showing planning, retrieval, analysis, critique, fact-checking, report generation, evaluation, presentation, and memory.}}{5}{figure.caption.5}\protected@file@percent }
+\newlabel{fig:workflow}{{2}{5}{Conditional multi-agent workflow showing planning, retrieval, analysis, critique, fact-checking, report generation, evaluation, presentation, and memory}{figure.caption.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Agent communication through explicit shared WorkflowState fields rather than hidden ad-hoc messages.}}{6}{figure.caption.6}\protected@file@percent }
+\newlabel{fig:communication}{{3}{6}{Agent communication through explicit shared WorkflowState fields rather than hidden ad-hoc messages}{figure.caption.6}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces State transition diagram showing how workflow status values move through the graph.}}{6}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:state-transition}{{4}{6}{State transition diagram showing how workflow status values move through the graph}{figure.caption.7}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Report generation pipeline from evidence and tables to Markdown, LaTeX/PDF, presentation, and evaluation outputs.}}{7}{figure.caption.8}\protected@file@percent }
+\newlabel{fig:report-pipeline}{{5}{7}{Report generation pipeline from evidence and tables to Markdown, LaTeX/PDF, presentation, and evaluation outputs}{figure.caption.8}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Evaluation pipeline with rubric scoring, thresholding, and optional revision routing.}}{7}{figure.caption.9}\protected@file@percent }
+\newlabel{fig:evaluation-pipeline}{{6}{7}{Evaluation pipeline with rubric scoring, thresholding, and optional revision routing}{figure.caption.9}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Evidence distribution by theme for the deterministic demonstration corpus.}}{8}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:evidence-theme}{{7}{8}{Evidence distribution by theme for the deterministic demonstration corpus}{figure.caption.10}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Radar chart of selected quality dimensions for the generated artifact.}}{9}{figure.caption.11}\protected@file@percent }
+\newlabel{fig:quality-radar}{{8}{9}{Radar chart of selected quality dimensions for the generated artifact}{figure.caption.11}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Conceptual grounding pipeline from user question to evidence-backed synthesis.}}{10}{figure.caption.12}\protected@file@percent }
+\newlabel{fig:conceptual-grounding}{{9}{10}{Conceptual grounding pipeline from user question to evidence-backed synthesis}{figure.caption.12}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Agent Responsibilities}{10}{section.6}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Agent Roles}}{10}{table.caption.13}\protected@file@percent }
+\newlabel{tab:state-table-1}{{1}{10}{Agent Roles}{table.caption.13}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Framework Comparison}}{11}{table.caption.14}\protected@file@percent }
+\newlabel{tab:state-table-2}{{2}{11}{Framework Comparison}{table.caption.14}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces API Endpoints}}{11}{table.caption.15}\protected@file@percent }
+\newlabel{tab:state-table-3}{{3}{11}{API Endpoints}{table.caption.15}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Evaluation Rubric}}{11}{table.caption.16}\protected@file@percent }
+\newlabel{tab:state-table-4}{{4}{11}{Evaluation Rubric}{table.caption.16}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Limitations and Mitigations}}{11}{table.caption.17}\protected@file@percent }
+\newlabel{tab:state-table-5}{{5}{11}{Limitations and Mitigations}{table.caption.17}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Workflow and State Model}{12}{section.7}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Conditional Routing Rules}}{12}{table.caption.18}\protected@file@percent }
+\newlabel{tab:routing-rules}{{6}{12}{Conditional Routing Rules}{table.caption.18}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Mathematical Formulation}{12}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Algorithmic Workflow}{13}{section.9}\protected@file@percent }
+\newlabel{lst:agentic-algorithm}{{1}{13}{Algorithm 1: Conditional multi-agent execution}{lstlisting.1}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}{\ignorespaces Algorithm 1: Conditional multi-agent execution}}{13}{lstlisting.1}\protected@file@percent }
+\newlabel{lst:claim-gating}{{2}{13}{Algorithm 2: Claim grounding and citation gating}{lstlisting.2}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}{\ignorespaces Algorithm 2: Claim grounding and citation gating}}{13}{lstlisting.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10}Evidence and Citation Strategy}{13}{section.10}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Representative Retrieved Evidence Sources}}{14}{table.caption.19}\protected@file@percent }
+\newlabel{tab:evidence-sources}{{7}{14}{Representative Retrieved Evidence Sources}{table.caption.19}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {11}Implementation Details}{14}{section.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {12}API, Storage, and Artifacts}{14}{section.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {13}User Interface and Panel Screenshots}{14}{section.13}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Actual Streamlit Overview tab captured in a headless browser after mock demo run.}}{15}{figure.caption.20}\protected@file@percent }
+\newlabel{fig:ui-home}{{10}{15}{Actual Streamlit Overview tab captured in a headless browser after mock demo run}{figure.caption.20}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Actual Streamlit Workflow tab captured in a headless browser after mock demo run.}}{15}{figure.caption.21}\protected@file@percent }
+\newlabel{fig:ui-workflow}{{11}{15}{Actual Streamlit Workflow tab captured in a headless browser after mock demo run}{figure.caption.21}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Actual Streamlit Agents tab captured in a headless browser after mock demo run.}}{16}{figure.caption.22}\protected@file@percent }
+\newlabel{fig:ui-agent-outputs}{{12}{16}{Actual Streamlit Agents tab captured in a headless browser after mock demo run}{figure.caption.22}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces Actual Streamlit Results tab captured in a headless browser after mock demo run.}}{16}{figure.caption.23}\protected@file@percent }
+\newlabel{fig:ui-results}{{13}{16}{Actual Streamlit Results tab captured in a headless browser after mock demo run}{figure.caption.23}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces Actual Streamlit Figures tab captured in a headless browser after mock demo run.}}{17}{figure.caption.24}\protected@file@percent }
+\newlabel{fig:ui-figures}{{14}{17}{Actual Streamlit Figures tab captured in a headless browser after mock demo run}{figure.caption.24}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {15}{\ignorespaces Actual Streamlit Downloads tab captured in a headless browser after mock demo run.}}{17}{figure.caption.25}\protected@file@percent }
+\newlabel{fig:ui-downloads}{{15}{17}{Actual Streamlit Downloads tab captured in a headless browser after mock demo run}{figure.caption.25}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {16}{\ignorespaces Demo evaluation score panel generated from the reproducible workflow run.}}{18}{figure.caption.26}\protected@file@percent }
+\newlabel{fig:demo-eval}{{16}{18}{Demo evaluation score panel generated from the reproducible workflow run}{figure.caption.26}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {17}{\ignorespaces Demo workflow result panel summarizing run ID, status, sources, figures, and agent sequence.}}{18}{figure.caption.27}\protected@file@percent }
+\newlabel{fig:demo-workflow-result}{{17}{18}{Demo workflow result panel summarizing run ID, status, sources, figures, and agent sequence}{figure.caption.27}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {18}{\ignorespaces Demo gallery of generated figures used by the final report.}}{19}{figure.caption.28}\protected@file@percent }
+\newlabel{fig:demo-generated-figures}{{18}{19}{Demo gallery of generated figures used by the final report}{figure.caption.28}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {19}{\ignorespaces Demo report preview showing generated academic sections and run metadata.}}{19}{figure.caption.29}\protected@file@percent }
+\newlabel{fig:demo-report-preview}{{19}{19}{Demo report preview showing generated academic sections and run metadata}{figure.caption.29}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {14}Report Generation and LaTeX Formatting}{20}{section.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {15}Evaluation Methodology}{20}{section.15}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Final Evaluation Scores}}{20}{table.caption.30}\protected@file@percent }
+\newlabel{tab:evaluation-scores}{{8}{20}{Final Evaluation Scores}{table.caption.30}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {16}Results}{20}{section.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {17}Claim Checks}{20}{section.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {18}Critic Notes}{21}{section.18}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {19}Error Analysis}{21}{section.19}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {20}Ethical and Safety Considerations}{21}{section.20}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {21}Testing and Reproducibility}{21}{section.21}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}{\ignorespaces Local verification commands}}{21}{lstlisting.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {22}Limitations}{21}{section.22}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Limitations and Mitigations}}{22}{table.caption.28}\protected@file@percent }
-\newlabel{tab:limitations}{{7}{22}{Limitations and Mitigations}{table.caption.28}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {23}AI-Assisted Development Disclosure}{22}{section.23}\protected@file@percent }
-\citation{who_2021_ai_health}
-\citation{bender_2021_stochastic_parrots}
-\citation{vasey_2022_decide_ai}
-\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces AI tools used during development}}{23}{table.caption.29}\protected@file@percent }
-\newlabel{tab:ai-dev-tools}{{8}{23}{AI tools used during development}{table.caption.29}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {24}Ethical Considerations}{23}{section.24}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {25}Future Work}{23}{section.25}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {26}Conclusion}{23}{section.26}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {A}Framework Comparison}{24}{appendix.A}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Framework Comparison}}{24}{table.caption.30}\protected@file@percent }
-\newlabel{tab:frameworks}{{9}{24}{Framework Comparison}{table.caption.30}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {B}Conceptual Grounding Figure}{24}{appendix.B}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {19}{\ignorespaces Conceptual view of grounded synthesis from question to evidence-backed report.}}{24}{figure.caption.31}\protected@file@percent }
-\newlabel{fig:conceptual-grounding}{{19}{24}{Conceptual view of grounded synthesis from question to evidence-backed report}{figure.caption.31}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {C}Claim Checks}{24}{appendix.C}\protected@file@percent }
+\citation{*}
 \bibstyle{plain}
 \bibdata{references}
 \bibcite{madaan_2023_self_refine}{1}
-\bibcite{garg_2005_cdss}{2}
-\bibcite{vasey_2022_decide_ai}{3}
-\bibcite{crewai_docs}{4}
-\bibcite{bender_2021_stochastic_parrots}{5}
-\bibcite{google_adk_docs}{6}
-\bibcite{kawamoto_2005_cdss}{7}
-\bibcite{langgraph_docs}{8}
-\bibcite{semantic_kernel_docs}{9}
-\bibcite{shinn_2023_reflexion}{10}
-\bibcite{who_2021_ai_health}{11}
-\bibcite{lewis_2020_rag}{12}
-\bibcite{pytest_docs}{13}
-\bibcite{autogen_2023}{14}
-\bibcite{sutton_2020_cdss}{15}
-\bibcite{rivera_2020_spirit_ai}{16}
-\bibcite{es_2023_ragas}{17}
-\bibcite{yao_2022_react}{18}
-\bibcite{weng_2023_agents}{19}
-\bibcite{liu_2020_consort_ai}{20}
-\bibcite{ji_2023_hallucination_survey}{21}
-\gdef \@abspage@last{30}
+\bibcite{amershi_2019_seml}{2}
+\bibcite{garg_2005_cdss}{3}
+\bibcite{vasey_2022_decide_ai}{4}
+\bibcite{crewai_docs}{5}
+\bibcite{bender_2021_stochastic_parrots}{6}
+\bibcite{google_adk_docs}{7}
+\bibcite{singhal_2023_medpalm}{8}
+\bibcite{kawamoto_2005_cdss}{9}
+\bibcite{langgraph_docs}{10}
+\bibcite{semantic_kernel_docs}{11}
+\bibcite{shinn_2023_reflexion}{12}
+\@writefile{toc}{\contentsline {section}{\numberline {23}Future Work}{22}{section.23}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {24}Conclusion}{22}{section.24}\protected@file@percent }
+\bibcite{who_2021_ai_health}{13}
+\bibcite{lewis_2020_rag}{14}
+\bibcite{pytest_docs}{15}
+\bibcite{autogen_2023}{16}
+\bibcite{sutton_2020_cdss}{17}
+\bibcite{rivera_2020_spirit_ai}{18}
+\bibcite{es_2023_ragas}{19}
+\bibcite{yao_2022_react}{20}
+\bibcite{weng_2023_agents}{21}
+\bibcite{liu_2020_consort_ai}{22}
+\bibcite{ji_2023_hallucination_survey}{23}
+\gdef \@abspage@last{23}
