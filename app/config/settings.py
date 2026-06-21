@@ -9,10 +9,16 @@ from dotenv import load_dotenv
 
 PROJECT_DIR = Path(__file__).resolve().parents[2]
 APP_DIR = PROJECT_DIR / "app"
+ENV_FILE = PROJECT_DIR / ".env"
 
-# Load local secrets from .env when running Streamlit, FastAPI, tests, or CLI scripts.
-# Environment variables already exported in the shell still take priority.
-load_dotenv(PROJECT_DIR / ".env", override=False)
+
+def reload_env() -> None:
+    """Reload .env so Streamlit reruns can pick up newly edited API keys."""
+    load_dotenv(ENV_FILE, override=True)
+
+
+# Initial load for CLI, tests, FastAPI, and Streamlit startup.
+reload_env()
 
 
 def _bool_env(name: str, default: bool) -> bool:
@@ -24,20 +30,32 @@ def _bool_env(name: str, default: bool) -> bool:
 
 @dataclass(frozen=True)
 class Settings:
-    app_env: str = os.getenv("APP_ENV", "local")
-    use_mock_llm: bool = _bool_env("USE_MOCK_LLM", True)
-    model_provider: str = os.getenv("MODEL_PROVIDER", "mock")
-    openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
-    database_path: Path = PROJECT_DIR / os.getenv("DATABASE_PATH", "app/storage/agentic_platform.db")
-    output_dir: Path = PROJECT_DIR / os.getenv("OUTPUT_DIR", "outputs")
-    evaluation_threshold: int = int(os.getenv("EVALUATION_THRESHOLD", "78"))
-    tavily_api_key: str = os.getenv("TAVILY_API_KEY", "")
-    serpapi_api_key: str = os.getenv("SERPAPI_API_KEY", "")
-    log_level: str = os.getenv("LOG_LEVEL", "INFO")
+    app_env: str
+    use_mock_llm: bool
+    model_provider: str
+    openai_api_key: str
+    database_path: Path
+    output_dir: Path
+    evaluation_threshold: int
+    tavily_api_key: str
+    serpapi_api_key: str
+    log_level: str
 
 
 def get_settings() -> Settings:
-    settings = Settings()
+    reload_env()
+    settings = Settings(
+        app_env=os.getenv("APP_ENV", "local"),
+        use_mock_llm=_bool_env("USE_MOCK_LLM", True),
+        model_provider=os.getenv("MODEL_PROVIDER", "mock"),
+        openai_api_key=os.getenv("OPENAI_API_KEY", ""),
+        database_path=PROJECT_DIR / os.getenv("DATABASE_PATH", "app/storage/agentic_platform.db"),
+        output_dir=PROJECT_DIR / os.getenv("OUTPUT_DIR", "outputs"),
+        evaluation_threshold=int(os.getenv("EVALUATION_THRESHOLD", "78")),
+        tavily_api_key=os.getenv("TAVILY_API_KEY", ""),
+        serpapi_api_key=os.getenv("SERPAPI_API_KEY", ""),
+        log_level=os.getenv("LOG_LEVEL", "INFO"),
+    )
     settings.output_dir.mkdir(parents=True, exist_ok=True)
     settings.database_path.parent.mkdir(parents=True, exist_ok=True)
     return settings
