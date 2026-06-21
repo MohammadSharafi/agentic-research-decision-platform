@@ -22,13 +22,14 @@ DEMO_TOPICS: dict[str, str] = {
 }
 
 TAB_NAMES: list[str] = [
-    "Overview",
+    "Answer",
+    "Evidence",
+    "Analysis",
+    "Figures",
+    "Score",
+    "Downloads",
     "Workflow",
     "Agents",
-    "Results",
-    "Figures",
-    "Downloads",
-    "About",
 ]
 
 WORKFLOW_PIPELINE: list[tuple[str, str, str]] = [
@@ -90,10 +91,10 @@ REQUIRED_RESULT_IMAGES = [
 ]
 
 SCREENSHOT_TAB_MAP = {
-    "ui_home.png": "Overview",
+    "ui_home.png": "Answer",
     "ui_workflow.png": "Workflow",
     "ui_agent_outputs.png": "Agents",
-    "ui_results.png": "Results",
+    "ui_results.png": "Score",
     "ui_figures.png": "Figures",
     "ui_downloads.png": "Downloads",
 }
@@ -225,7 +226,7 @@ def ui_screenshot_caption(filename: str) -> str:
     capture_type = meta.get("capture_type", "unknown")
     tab = SCREENSHOT_TAB_MAP.get(filename, "interface")
     if capture_type == "browser":
-        return f"Actual Streamlit {tab} tab captured in a headless browser after mock demo run."
+        return f"Actual Streamlit {tab} tab captured in a headless browser after demo run."
     if capture_type == "fallback":
         return f"Fallback documentation render of the {tab} tab (browser capture unavailable)."
     return f"Streamlit {tab} tab screenshot for the demonstration interface."
