@@ -11,6 +11,7 @@ if str(PROJECT_DIR) not in sys.path:
 
 import streamlit as st
 
+from app.config.settings import get_settings
 from app.graph.workflow import run_workflow
 from app.ui.ui_helpers import (
     DEMO_TOPICS,
@@ -42,19 +43,37 @@ st.set_page_config(
 st.markdown(
     """
     <style>
+    html, body, [class*="css"], .stApp, [data-testid="stAppViewContainer"] {
+        font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Arial, sans-serif !important;
+        letter-spacing: 0 !important;
+    }
+
+    .stApp {
+        background: #f8fafc;
+        color: #0f172a;
+    }
+
     .block-container {
-        padding-top: 1.1rem;
+        padding-top: 1.15rem;
         padding-bottom: 2.5rem;
-        max-width: 1180px;
+        max-width: 1120px;
     }
 
     [data-testid="stSidebar"] {
-        background: #111827;
-        border-right: 1px solid rgba(255,255,255,0.08);
+        background: #f1f5f9;
+        border-right: 1px solid #e2e8f0;
     }
 
-    [data-testid="stSidebar"] * {
-        color: #f8fafc;
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3,
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] span,
+    [data-testid="stSidebar"] li,
+    [data-testid="stSidebar"] div {
+        color: #0f172a;
+        letter-spacing: 0 !important;
     }
 
     [data-testid="stSidebar"] .stButton > button {
@@ -63,33 +82,37 @@ st.markdown(
         border: 0;
         border-radius: 12px;
         font-weight: 800;
-        padding: 0.75rem 1rem;
+        padding: 0.72rem 1rem;
+        box-shadow: 0 10px 24px rgba(239,68,68,0.20);
     }
 
     .hero {
         background:
-          radial-gradient(circle at 15% 15%, rgba(20,184,166,0.28), transparent 28%),
-          linear-gradient(135deg, #0f172a 0%, #164e63 56%, #0f766e 100%);
-        color: white;
-        padding: 1.35rem 1.5rem;
-        border-radius: 20px;
+          radial-gradient(circle at 15% 15%, rgba(20,184,166,0.22), transparent 30%),
+          linear-gradient(135deg, #0f172a 0%, #164e63 58%, #0f766e 100%);
+        color: white !important;
+        padding: 1.35rem 1.55rem;
+        border-radius: 18px;
         margin-bottom: 1rem;
         border: 1px solid rgba(255,255,255,0.14);
-        box-shadow: 0 18px 45px rgba(2,6,23,0.22);
+        box-shadow: 0 16px 38px rgba(15,23,42,0.18);
     }
 
     .hero h1 {
         margin: 0 0 0.35rem 0;
-        font-size: 2rem;
-        line-height: 1.12;
-        letter-spacing: -0.035em;
+        font-size: 1.85rem;
+        line-height: 1.15;
+        letter-spacing: -0.015em !important;
+        color: white !important;
+        font-weight: 900;
     }
 
     .hero p {
-        margin: 0.25rem 0 1rem 0;
-        color: #dbeafe;
-        font-size: 1rem;
-        max-width: 880px;
+        margin: 0.25rem 0 0.95rem 0;
+        color: #e0f2fe !important;
+        font-size: 0.98rem;
+        line-height: 1.55;
+        max-width: 900px;
     }
 
     .badge-row {
@@ -99,90 +122,98 @@ st.markdown(
     }
 
     .badge {
-        background: rgba(255,255,255,0.12);
-        border: 1px solid rgba(255,255,255,0.24);
+        background: rgba(255,255,255,0.13);
+        border: 1px solid rgba(255,255,255,0.25);
         border-radius: 999px;
         padding: 0.28rem 0.75rem;
         font-size: 0.82rem;
         font-weight: 800;
         color: #ffffff !important;
+        line-height: 1.25;
     }
 
     .section-kicker {
-        color: #38bdf8 !important;
+        color: #0f766e !important;
         text-transform: uppercase;
         font-size: 0.76rem;
         font-weight: 900;
-        letter-spacing: 0.08em;
-        margin-bottom: 0.2rem;
+        letter-spacing: 0.08em !important;
+        margin-bottom: 0.15rem;
     }
 
     .app-card {
         background: #ffffff;
-        border: 1px solid #e5e7eb;
-        border-radius: 16px;
+        border: 1px solid #dbe4ea;
+        border-radius: 15px;
         padding: 1rem;
         margin-bottom: 0.85rem;
-        box-shadow: 0 8px 26px rgba(15,23,42,0.07);
+        box-shadow: 0 8px 26px rgba(15,23,42,0.055);
         color: #0f172a !important;
+        overflow: hidden;
     }
 
     .app-card * {
         color: #0f172a !important;
+        letter-spacing: 0 !important;
     }
 
     .app-card h3,
     .app-card h4 {
-        margin: 0 0 0.3rem 0;
-        line-height: 1.18;
+        margin: 0 0 0.35rem 0;
+        line-height: 1.25;
+        font-weight: 900;
     }
 
     .app-card p {
-        margin: 0.25rem 0;
+        margin: 0.22rem 0;
         color: #475569 !important;
+        line-height: 1.55;
+        font-size: 0.93rem;
     }
 
     .metric-card {
-        min-height: 104px;
+        min-height: 100px;
         border-top: 4px solid #14b8a6;
     }
 
     .metric-label {
-        font-size: 0.78rem;
+        font-size: 0.74rem;
         font-weight: 900;
         text-transform: uppercase;
-        letter-spacing: 0.06em;
+        letter-spacing: 0.06em !important;
         color: #64748b !important;
     }
 
     .metric-value {
-        font-size: 1.55rem;
+        font-size: 1.42rem;
         font-weight: 900;
         margin-top: 0.2rem;
+        line-height: 1.15;
         color: #0f172a !important;
         overflow-wrap: anywhere;
     }
 
     .metric-help {
         margin-top: 0.25rem;
-        font-size: 0.86rem;
+        font-size: 0.82rem;
         color: #64748b !important;
     }
 
     .story-card {
-        background: linear-gradient(135deg, #ecfeff, #f8fafc);
+        background: linear-gradient(135deg, #ecfeff, #ffffff);
         border-left: 5px solid #0891b2;
     }
 
     .stage-card {
-        display: flex;
-        gap: 0.85rem;
-        align-items: flex-start;
-        min-height: 112px;
+        display: grid;
+        grid-template-columns: 2.15rem 1fr;
+        gap: 0.8rem;
+        align-items: start;
+        min-height: 96px;
     }
 
     .stage-number {
-        min-width: 2rem;
+        width: 2rem;
         height: 2rem;
         border-radius: 999px;
         background: #0f766e;
@@ -191,6 +222,7 @@ st.markdown(
         align-items: center;
         justify-content: center;
         font-weight: 900;
+        flex-shrink: 0;
     }
 
     .agent-status {
@@ -207,10 +239,11 @@ st.markdown(
         font-size: 1rem;
         font-weight: 900;
         margin-bottom: 0.35rem;
+        color: #0f172a !important;
     }
 
     .path-text {
-        font-size: 0.78rem;
+        font-size: 0.76rem;
         color: #64748b !important;
         word-break: break-all;
         margin-top: 0.45rem;
@@ -224,6 +257,7 @@ st.markdown(
         padding: 0.85rem 1rem;
         margin-bottom: 0.85rem;
         font-weight: 700;
+        line-height: 1.5;
     }
 
     .soft-alert * {
@@ -238,10 +272,25 @@ st.markdown(
         padding: 0.9rem 1rem;
         margin: 0.85rem 0;
         font-weight: 800;
+        line-height: 1.5;
     }
 
     .success-banner * {
         color: #14532d !important;
+    }
+
+    .warning-card {
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        color: #7c2d12 !important;
+        border-radius: 14px;
+        padding: 0.85rem 1rem;
+        margin-bottom: 0.85rem;
+        font-weight: 700;
+    }
+
+    .warning-card * {
+        color: #7c2d12 !important;
     }
 
     .empty-state {
@@ -259,12 +308,29 @@ st.markdown(
     }
 
     div[data-testid="stTabs"] button p {
+        font-weight: 850;
+        letter-spacing: 0 !important;
+    }
+
+    div[data-testid="stTabs"] [aria-selected="true"] p {
+        color: #ef4444 !important;
+    }
+
+    .stDownloadButton > button,
+    .stButton > button {
+        border-radius: 12px;
         font-weight: 800;
     }
 
-    .stDownloadButton > button {
-        border-radius: 12px;
-        font-weight: 800;
+    div[data-testid="stExpander"] {
+        background: #ffffff;
+        border: 1px solid #dbe4ea;
+        border-radius: 14px;
+    }
+
+    code {
+        white-space: pre-wrap !important;
+        word-break: break-word !important;
     }
     </style>
     """,
@@ -279,6 +345,10 @@ if "seed_started" not in st.session_state:
 
 def _esc(value: object) -> str:
     return html.escape(str(value))
+
+
+def key_state(value: str) -> str:
+    return "Configured" if value else "Missing"
 
 
 def render_hero() -> None:
@@ -333,7 +403,7 @@ def render_status_banner(state: Any | None) -> None:
         st.markdown(
             """
             <div class="soft-alert">
-                Start here: keep Mock mode selected, click <b>Run Agentic Workflow</b>,
+                Start here: keep Mock mode selected for the presentation, click <b>Run Agentic Workflow</b>,
                 then present the tabs from left to right.
             </div>
             """,
@@ -368,6 +438,8 @@ def maybe_seed_demo_state() -> None:
 
 
 def render_sidebar() -> tuple[str, bool] | None:
+    settings = get_settings()
+
     st.sidebar.markdown("## 🧠 Agentic Research")
     st.sidebar.caption("Clean demo controls for your final-project presentation.")
     st.sidebar.divider()
@@ -383,7 +455,16 @@ def render_sidebar() -> tuple[str, bool] | None:
     if use_mock_llm:
         st.sidebar.success("Recommended for presentation: stable, offline, no API keys.")
     else:
-        st.sidebar.warning("Use only if API keys are configured.")
+        if settings.openai_api_key or settings.tavily_api_key or settings.serpapi_api_key:
+            st.sidebar.success("At least one API key is configured in .env.")
+        else:
+            st.sidebar.error("No API keys found. Add them to .env and restart Streamlit.")
+
+    with st.sidebar.expander("API key status", expanded=not use_mock_llm):
+        st.write(f"OpenAI: **{key_state(settings.openai_api_key)}**")
+        st.write(f"Tavily: **{key_state(settings.tavily_api_key)}**")
+        st.write(f"SerpAPI: **{key_state(settings.serpapi_api_key)}**")
+        st.caption("The current project remains deterministic by default. External search/model adapters are extension points.")
 
     st.sidebar.markdown("### 2) Demo topic")
     topic_choice = st.sidebar.selectbox("Preset topic", list(DEMO_TOPICS.keys()))
