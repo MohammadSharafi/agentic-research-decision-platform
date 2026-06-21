@@ -33,307 +33,51 @@ from app.ui.ui_helpers import (
     screenshot_seed_enabled,
 )
 
-st.set_page_config(
-    page_title="Agentic Research Platform",
-    page_icon="🧠",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
+st.set_page_config(page_title="Agentic Research Platform", page_icon="🧠", layout="wide")
 
 st.markdown(
     """
-    <style>
-    html, body, [class*="css"], .stApp, [data-testid="stAppViewContainer"] {
-        font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Arial, sans-serif !important;
-        letter-spacing: 0 !important;
-    }
-
-    .stApp {
-        background: #f8fafc;
-        color: #0f172a;
-    }
-
-    .block-container {
-        padding-top: 1.15rem;
-        padding-bottom: 2.5rem;
-        max-width: 1120px;
-    }
-
-    [data-testid="stSidebar"] {
-        background: #f1f5f9;
-        border-right: 1px solid #e2e8f0;
-    }
-
-    [data-testid="stSidebar"] h1,
-    [data-testid="stSidebar"] h2,
-    [data-testid="stSidebar"] h3,
-    [data-testid="stSidebar"] p,
-    [data-testid="stSidebar"] label,
-    [data-testid="stSidebar"] span,
-    [data-testid="stSidebar"] li,
-    [data-testid="stSidebar"] div {
-        color: #0f172a;
-        letter-spacing: 0 !important;
-    }
-
-    [data-testid="stSidebar"] .stButton > button {
-        background: linear-gradient(135deg, #ef4444, #f97316);
-        color: white !important;
-        border: 0;
-        border-radius: 12px;
-        font-weight: 800;
-        padding: 0.72rem 1rem;
-        box-shadow: 0 10px 24px rgba(239,68,68,0.20);
-    }
-
-    .hero {
-        background:
-          radial-gradient(circle at 15% 15%, rgba(20,184,166,0.22), transparent 30%),
-          linear-gradient(135deg, #0f172a 0%, #164e63 58%, #0f766e 100%);
-        color: white !important;
-        padding: 1.35rem 1.55rem;
-        border-radius: 18px;
-        margin-bottom: 1rem;
-        border: 1px solid rgba(255,255,255,0.14);
-        box-shadow: 0 16px 38px rgba(15,23,42,0.18);
-    }
-
-    .hero h1 {
-        margin: 0 0 0.35rem 0;
-        font-size: 1.85rem;
-        line-height: 1.15;
-        letter-spacing: -0.015em !important;
-        color: white !important;
-        font-weight: 900;
-    }
-
-    .hero p {
-        margin: 0.25rem 0 0.95rem 0;
-        color: #e0f2fe !important;
-        font-size: 0.98rem;
-        line-height: 1.55;
-        max-width: 900px;
-    }
-
-    .badge-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.55rem;
-    }
-
-    .badge {
-        background: rgba(255,255,255,0.13);
-        border: 1px solid rgba(255,255,255,0.25);
-        border-radius: 999px;
-        padding: 0.28rem 0.75rem;
-        font-size: 0.82rem;
-        font-weight: 800;
-        color: #ffffff !important;
-        line-height: 1.25;
-    }
-
-    .section-kicker {
-        color: #0f766e !important;
-        text-transform: uppercase;
-        font-size: 0.76rem;
-        font-weight: 900;
-        letter-spacing: 0.08em !important;
-        margin-bottom: 0.15rem;
-    }
-
-    .app-card {
-        background: #ffffff;
-        border: 1px solid #dbe4ea;
-        border-radius: 15px;
-        padding: 1rem;
-        margin-bottom: 0.85rem;
-        box-shadow: 0 8px 26px rgba(15,23,42,0.055);
-        color: #0f172a !important;
-        overflow: hidden;
-    }
-
-    .app-card * {
-        color: #0f172a !important;
-        letter-spacing: 0 !important;
-    }
-
-    .app-card h3,
-    .app-card h4 {
-        margin: 0 0 0.35rem 0;
-        line-height: 1.25;
-        font-weight: 900;
-    }
-
-    .app-card p {
-        margin: 0.22rem 0;
-        color: #475569 !important;
-        line-height: 1.55;
-        font-size: 0.93rem;
-    }
-
-    .metric-card {
-        min-height: 100px;
-        border-top: 4px solid #14b8a6;
-    }
-
-    .metric-label {
-        font-size: 0.74rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        letter-spacing: 0.06em !important;
-        color: #64748b !important;
-    }
-
-    .metric-value {
-        font-size: 1.42rem;
-        font-weight: 900;
-        margin-top: 0.2rem;
-        line-height: 1.15;
-        color: #0f172a !important;
-        overflow-wrap: anywhere;
-    }
-
-    .metric-help {
-        margin-top: 0.25rem;
-        font-size: 0.82rem;
-        color: #64748b !important;
-    }
-
-    .story-card {
-        background: linear-gradient(135deg, #ecfeff, #ffffff);
-        border-left: 5px solid #0891b2;
-    }
-
-    .stage-card {
-        display: grid;
-        grid-template-columns: 2.15rem 1fr;
-        gap: 0.8rem;
-        align-items: start;
-        min-height: 96px;
-    }
-
-    .stage-number {
-        width: 2rem;
-        height: 2rem;
-        border-radius: 999px;
-        background: #0f766e;
-        color: #ffffff !important;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 900;
-        flex-shrink: 0;
-    }
-
-    .agent-status {
-        float: right;
-        background: #dcfce7;
-        color: #166534 !important;
-        padding: 0.16rem 0.58rem;
-        border-radius: 999px;
-        font-size: 0.74rem;
-        font-weight: 900;
-    }
-
-    .download-title {
-        font-size: 1rem;
-        font-weight: 900;
-        margin-bottom: 0.35rem;
-        color: #0f172a !important;
-    }
-
-    .path-text {
-        font-size: 0.76rem;
-        color: #64748b !important;
-        word-break: break-all;
-        margin-top: 0.45rem;
-    }
-
-    .soft-alert {
-        background: #eff6ff;
-        border: 1px solid #bfdbfe;
-        color: #1e3a8a !important;
-        border-radius: 14px;
-        padding: 0.85rem 1rem;
-        margin-bottom: 0.85rem;
-        font-weight: 700;
-        line-height: 1.5;
-    }
-
-    .soft-alert * {
-        color: #1e3a8a !important;
-    }
-
-    .success-banner {
-        background: #ecfdf5;
-        border: 1px solid #bbf7d0;
-        color: #14532d !important;
-        border-radius: 14px;
-        padding: 0.9rem 1rem;
-        margin: 0.85rem 0;
-        font-weight: 800;
-        line-height: 1.5;
-    }
-
-    .success-banner * {
-        color: #14532d !important;
-    }
-
-    .warning-card {
-        background: #fff7ed;
-        border: 1px solid #fed7aa;
-        color: #7c2d12 !important;
-        border-radius: 14px;
-        padding: 0.85rem 1rem;
-        margin-bottom: 0.85rem;
-        font-weight: 700;
-    }
-
-    .warning-card * {
-        color: #7c2d12 !important;
-    }
-
-    .empty-state {
-        background: #ffffff;
-        color: #0f172a !important;
-        border: 1px dashed #cbd5e1;
-        border-radius: 18px;
-        padding: 2rem;
-        text-align: center;
-        margin-top: 1rem;
-    }
-
-    .empty-state * {
-        color: #0f172a !important;
-    }
-
-    div[data-testid="stTabs"] button p {
-        font-weight: 850;
-        letter-spacing: 0 !important;
-    }
-
-    div[data-testid="stTabs"] [aria-selected="true"] p {
-        color: #ef4444 !important;
-    }
-
-    .stDownloadButton > button,
-    .stButton > button {
-        border-radius: 12px;
-        font-weight: 800;
-    }
-
-    div[data-testid="stExpander"] {
-        background: #ffffff;
-        border: 1px solid #dbe4ea;
-        border-radius: 14px;
-    }
-
-    code {
-        white-space: pre-wrap !important;
-        word-break: break-word !important;
-    }
-    </style>
-    """,
+<style>
+:root { --bg:#f8fafc; --panel:#ffffff; --text:#0f172a; --muted:#475569; --line:#cbd5e1; --brand:#0f766e; --accent:#ef4444; }
+html, body, .stApp, [data-testid="stAppViewContainer"] { background:var(--bg)!important; color:var(--text)!important; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Arial,sans-serif!important; letter-spacing:0!important; }
+[data-testid="stHeader"] { background:var(--bg)!important; }
+.block-container { max-width:1120px; padding-top:1.1rem; padding-bottom:2rem; }
+h1,h2,h3,h4,h5,h6,p,li,label,span,div { letter-spacing:0!important; }
+[data-testid="stSidebar"] { background:#eef2f7!important; border-right:1px solid #dbe4ea!important; }
+[data-testid="stSidebar"] * { color:var(--text)!important; }
+/* force readable controls */
+div[data-baseweb="select"]>div, div[data-baseweb="base-input"], textarea, input { background:#fff!important; color:var(--text)!important; border-color:var(--line)!important; }
+div[data-baseweb="select"] *, div[data-baseweb="base-input"] *, textarea, input { color:var(--text)!important; }
+textarea::placeholder, input::placeholder { color:#64748b!important; opacity:1!important; }
+div[data-baseweb="popover"], div[role="listbox"], ul[role="listbox"], div[role="option"], div[role="option"] * { background:#fff!important; color:var(--text)!important; }
+[data-testid="stSidebar"] .stButton>button { background:linear-gradient(135deg,#ef4444,#f97316)!important; color:white!important; border:0!important; border-radius:12px!important; font-weight:850!important; padding:.72rem 1rem!important; }
+.hero { background:linear-gradient(135deg,#0f172a 0%,#155e75 58%,#0f766e 100%); color:white!important; border-radius:18px; padding:1.35rem 1.55rem; margin-bottom:1rem; box-shadow:0 16px 38px rgba(15,23,42,.18); }
+.hero * { color:white!important; }
+.hero h1 { margin:0 0 .35rem 0; font-size:1.85rem; line-height:1.15; font-weight:900; }
+.hero p { margin:.25rem 0 .9rem 0; color:#e0f2fe!important; line-height:1.55; }
+.badge { display:inline-flex; margin:.25rem .4rem .1rem 0; background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:.28rem .75rem; font-size:.82rem; font-weight:850; }
+.notice { background:#eff6ff; color:#1e3a8a!important; border:1px solid #bfdbfe; border-radius:14px; padding:.85rem 1rem; margin:.85rem 0; font-weight:750; }
+.success-box { background:#ecfdf5; color:#14532d!important; border:1px solid #bbf7d0; border-radius:14px; padding:.85rem 1rem; margin:.85rem 0; font-weight:800; }
+.notice *, .success-box * { color:inherit!important; }
+.card { background:var(--panel)!important; color:var(--text)!important; border:1px solid #dbe4ea; border-radius:16px; padding:1rem; margin-bottom:.85rem; box-shadow:0 8px 26px rgba(15,23,42,.055); overflow:hidden; }
+.card * { color:var(--text)!important; }
+.card p { color:var(--muted)!important; line-height:1.55; margin:.25rem 0; }
+.metric { border-top:4px solid var(--brand); min-height:96px; }
+.metric-label { color:#64748b!important; font-size:.73rem; font-weight:900; text-transform:uppercase; }
+.metric-value { color:var(--text)!important; font-size:1.32rem; font-weight:900; line-height:1.15; word-break:break-word; }
+.metric-help { color:#64748b!important; font-size:.80rem; margin-top:.25rem; }
+.stage { display:grid; grid-template-columns:2rem minmax(0,1fr); gap:.75rem; min-height:88px; }
+.num { width:2rem; height:2rem; border-radius:999px; background:var(--brand); color:white!important; display:flex; align-items:center; justify-content:center; font-weight:900; }
+.kicker { color:var(--brand)!important; text-transform:uppercase; font-size:.75rem; font-weight:900; }
+.status-pill { float:right; background:#dcfce7; color:#166534!important; padding:.16rem .58rem; border-radius:999px; font-size:.74rem; font-weight:900; }
+.path { color:#64748b!important; font-size:.76rem; word-break:break-all; margin-top:.45rem; }
+div[data-testid="stTabs"] button p { font-weight:850!important; }
+div[data-testid="stTabs"] [aria-selected="true"] p { color:var(--accent)!important; }
+div[data-testid="stExpander"] { background:#fff!important; border:1px solid #dbe4ea!important; border-radius:14px!important; }
+.stDownloadButton>button, .stButton>button { border-radius:12px!important; font-weight:800!important; }
+code { background:#e2e8f0!important; color:#0f172a!important; white-space:pre-wrap!important; word-break:break-word!important; }
+</style>
+""",
     unsafe_allow_html=True,
 )
 
@@ -343,7 +87,7 @@ if "seed_started" not in st.session_state:
     st.session_state["seed_started"] = False
 
 
-def _esc(value: object) -> str:
+def esc(value: object) -> str:
     return html.escape(str(value))
 
 
@@ -351,160 +95,79 @@ def key_state(value: str) -> str:
     return "Configured" if value else "Missing"
 
 
-def render_hero() -> None:
+def card(title: str, body: str, icon: str = "💡") -> None:
+    st.markdown(f'<div class="card"><h4>{esc(icon)} {esc(title)}</h4><p>{esc(body)}</p></div>', unsafe_allow_html=True)
+
+
+def metric(label: str, value: str, help_text: str = "", color: str = "#0f766e") -> None:
+    st.markdown(
+        f'<div class="card metric" style="border-top-color:{color};"><div class="metric-label">{esc(label)}</div><div class="metric-value">{esc(value)}</div><div class="metric-help">{esc(help_text)}</div></div>',
+        unsafe_allow_html=True,
+    )
+
+
+def hero() -> None:
     st.markdown(
         """
-        <div class="hero">
-            <h1>Agentic Research & Decision Intelligence Platform</h1>
-            <p>
-                A presentation-ready multi-agent system that turns one research topic into
-                evidence, analysis, critique, fact-checks, figures, a report, a slide deck,
-                evaluation scores, and saved memory.
-            </p>
-            <div class="badge-row">
-                <span class="badge">✅ Mock demo ready</span>
-                <span class="badge">🧠 10 specialized agents</span>
-                <span class="badge">🔁 Conditional revision loops</span>
-                <span class="badge">📄 Report + PPTX outputs</span>
-            </div>
-        </div>
-        """,
+<div class="hero">
+  <h1>Agentic Research & Decision Intelligence Platform</h1>
+  <p>A presentation-ready multi-agent system that turns one research topic into evidence, analysis, critique, fact-checks, figures, a report, a slide deck, evaluation scores, and saved memory.</p>
+  <span class="badge">✅ Mock demo ready</span><span class="badge">🧠 10 agents</span><span class="badge">🔁 Revision loops</span><span class="badge">📄 Report + PPTX</span>
+</div>
+""",
         unsafe_allow_html=True,
     )
 
 
-def render_metric_card(label: str, value: str, help_text: str = "", border_color: str = "#14b8a6") -> None:
-    st.markdown(
-        f"""
-        <div class="app-card metric-card" style="border-top-color:{border_color};">
-            <div class="metric-label">{_esc(label)}</div>
-            <div class="metric-value">{_esc(value)}</div>
-            <div class="metric-help">{_esc(help_text)}</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-
-def render_story_card(title: str, body: str, icon: str = "💡") -> None:
-    st.markdown(
-        f"""
-        <div class="app-card story-card">
-            <h4>{_esc(icon)} {_esc(title)}</h4>
-            <p>{_esc(body)}</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-
-def render_status_banner(state: Any | None) -> None:
-    if state is None:
-        st.markdown(
-            """
-            <div class="soft-alert">
-                Start here: keep Mock mode selected for the presentation, click <b>Run Agentic Workflow</b>,
-                then present the tabs from left to right.
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        return
-
-    st.markdown(
-        f"""
-        <div class="success-banner">
-            ✅ Workflow completed — Run ID:
-            <code>{_esc(state.run_id)}</code>
-            &nbsp; | &nbsp; Score:
-            <b>{_esc(state.evaluation.total)}/100</b>
-            &nbsp; | &nbsp; Status:
-            <b>{_esc(state.status)}</b>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-
-def maybe_seed_demo_state() -> None:
+def seed_demo() -> None:
     if not screenshot_seed_enabled() or st.session_state["last_state"] is not None or st.session_state["seed_started"]:
         return
     st.session_state["seed_started"] = True
-    with st.spinner("Seeding demo workflow for screenshot capture..."):
-        st.session_state["last_state"] = run_workflow(
-            "Multi-agent AI systems for trustworthy clinical decision support",
-            use_mock_llm=True,
-        )
+    with st.spinner("Seeding demo workflow..."):
+        st.session_state["last_state"] = run_workflow("Multi-agent AI systems for trustworthy clinical decision support", use_mock_llm=True)
 
 
-def render_sidebar() -> tuple[str, bool] | None:
+def sidebar() -> tuple[str, bool] | None:
     settings = get_settings()
-
     st.sidebar.markdown("## 🧠 Agentic Research")
     st.sidebar.caption("Clean demo controls for your final-project presentation.")
     st.sidebar.divider()
-
     st.sidebar.markdown("### 1) Execution mode")
-    use_mock = st.sidebar.radio(
-        "Execution mode",
-        options=["Mock mode (deterministic)", "Real LLM mode (requires API keys)"],
-        index=0,
-        label_visibility="collapsed",
-    )
-    use_mock_llm = use_mock.startswith("Mock")
-    if use_mock_llm:
-        st.sidebar.success("Recommended for presentation: stable, offline, no API keys.")
+    mode = st.sidebar.radio("Execution mode", ["Mock mode (deterministic)", "Real LLM mode (requires API keys)"], index=0, label_visibility="collapsed")
+    use_mock = mode.startswith("Mock")
+    if use_mock:
+        st.sidebar.success("Recommended: stable, offline, no API keys.")
+    elif settings.openai_api_key or settings.tavily_api_key or settings.serpapi_api_key:
+        st.sidebar.success("At least one API key is configured.")
     else:
-        if settings.openai_api_key or settings.tavily_api_key or settings.serpapi_api_key:
-            st.sidebar.success("At least one API key is configured in .env.")
-        else:
-            st.sidebar.error("No API keys found. Add them to .env and restart Streamlit.")
-
-    with st.sidebar.expander("API key status", expanded=not use_mock_llm):
+        st.sidebar.error("No API keys found in .env.")
+    with st.sidebar.expander("API key status", expanded=not use_mock):
         st.write(f"OpenAI: **{key_state(settings.openai_api_key)}**")
         st.write(f"Tavily: **{key_state(settings.tavily_api_key)}**")
         st.write(f"SerpAPI: **{key_state(settings.serpapi_api_key)}**")
-        st.caption("The current project remains deterministic by default. External search/model adapters are extension points.")
-
     st.sidebar.markdown("### 2) Demo topic")
-    topic_choice = st.sidebar.selectbox("Preset topic", list(DEMO_TOPICS.keys()))
-    query = st.sidebar.text_area("Research or decision topic", value=DEMO_TOPICS[topic_choice], height=120)
-
+    topic = st.sidebar.selectbox("Preset topic", list(DEMO_TOPICS.keys()))
+    query = st.sidebar.text_area("Research or decision topic", value=DEMO_TOPICS[topic], height=120)
     st.sidebar.markdown("### 3) Run")
-    run_clicked = st.sidebar.button("🚀 Run Agentic Workflow", type="primary", use_container_width=True)
-
+    clicked = st.sidebar.button("🚀 Run Agentic Workflow", type="primary", use_container_width=True)
     st.sidebar.divider()
     st.sidebar.markdown("### Presentation path")
-    st.sidebar.markdown(
-        """
-        1. Overview: story + score  
-        2. Workflow: why agentic  
-        3. Agents: who did what  
-        4. Results: quality score  
-        5. Figures: visual proof  
-        6. Downloads: report + PPTX
-        """
-    )
-
+    st.sidebar.markdown("1. Overview\n2. Workflow\n3. Agents\n4. Results\n5. Figures\n6. Downloads")
     with st.sidebar.expander("Output directory"):
         st.code(str(get_output_dir()), language="text")
-
-    st.sidebar.info("Academic demo only — not medical advice.")
-
-    if run_clicked:
-        return query, use_mock_llm
+    if clicked:
+        return query, use_mock
     return None
 
 
-def run_workflow_ui(query: str, use_mock_llm: bool) -> None:
+def run_ui(query: str, use_mock: bool) -> None:
     try:
         with st.status("Running 10-agent workflow...", expanded=True) as status:
-            progress = st.progress(0, text="Starting planner...")
-            state = run_workflow(query, use_mock_llm=use_mock_llm)
-            total = max(len(WORKFLOW_PIPELINE), 1)
-            for idx, (agent, icon, description) in enumerate(WORKFLOW_PIPELINE, start=1):
-                st.write(f"{icon} **{agent}** — {description}")
-                progress.progress(min(idx / total, 1.0), text=f"Completed {idx}/{total}: {agent}")
+            progress = st.progress(0, text="Starting...")
+            state = run_workflow(query, use_mock_llm=use_mock)
+            for idx, (name, icon, desc) in enumerate(WORKFLOW_PIPELINE, start=1):
+                st.write(f"{icon} **{name}** — {desc}")
+                progress.progress(idx / len(WORKFLOW_PIPELINE), text=f"Completed {idx}/{len(WORKFLOW_PIPELINE)}: {name}")
             status.update(label="Workflow complete", state="complete")
         st.session_state["last_state"] = state
         st.rerun()
@@ -512,267 +175,124 @@ def run_workflow_ui(query: str, use_mock_llm: bool) -> None:
         st.error(f"Workflow failed: {exc}")
 
 
-def render_empty_state() -> None:
-    st.markdown(
-        """
-        <div class="empty-state">
-            <h3>Ready for demo</h3>
-            <p>
-                Choose <b>Mock mode</b>, keep the clinical decision-support topic,
-                and run the workflow. The output will populate every tab.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+def status(state: Any | None) -> None:
+    if not state:
+        st.markdown('<div class="notice">Start here: keep Mock mode selected, run the workflow, then present tabs left to right.</div>', unsafe_allow_html=True)
+    else:
+        st.markdown(f'<div class="success-box">✅ Workflow completed — Run ID: <code>{esc(state.run_id)}</code> | Score: <b>{esc(state.evaluation.total)}/100</b> | Status: <b>{esc(state.status)}</b></div>', unsafe_allow_html=True)
 
 
-def render_overview(state) -> None:
-    st.markdown('<div class="section-kicker">Presentation overview</div>', unsafe_allow_html=True)
+def empty() -> None:
+    st.markdown('<div class="card" style="text-align:center;padding:2rem;border-style:dashed;"><h3>Ready for demo</h3><p>Choose Mock mode, keep the default topic, and run the workflow.</p></div>', unsafe_allow_html=True)
+
+
+def overview(state: Any) -> None:
+    st.markdown('<div class="kicker">Presentation overview</div>', unsafe_allow_html=True)
     st.subheader("What this project demonstrates")
-
-    render_story_card(
-        "Main idea",
-        "This is not a single chatbot. It is a full multi-agent research pipeline with planning, evidence, critique, fact-checking, visualization, reporting, evaluation, and memory.",
-        "🎯",
-    )
-
+    card("Main idea", "A full multi-agent research pipeline: planning, evidence, critique, fact-checking, visualization, reporting, evaluation, and memory.", "🎯")
     c1, c2, c3, c4 = st.columns(4)
-    with c1:
-        render_metric_card("Run", state.run_id[:8] + "…", "Saved workflow trace")
-    with c2:
-        render_metric_card("Sources", str(len(state.sources)), "Ranked evidence items", "#0ea5e9")
-    with c3:
-        render_metric_card("Figures", str(len(state.figures)), "Generated visuals", "#8b5cf6")
-    with c4:
-        render_metric_card("Score", f"{state.evaluation.total}/100", f"Threshold {EVALUATION_THRESHOLD}", "#22c55e")
-
+    with c1: metric("Run", state.run_id[:8] + "…", "Saved trace")
+    with c2: metric("Sources", str(len(state.sources)), "Evidence items", "#0ea5e9")
+    with c3: metric("Figures", str(len(state.figures)), "Generated visuals", "#8b5cf6")
+    with c4: metric("Score", f"{state.evaluation.total}/100", f"Threshold {EVALUATION_THRESHOLD}", "#22c55e")
     c5, c6, c7 = st.columns(3)
-    with c5:
-        render_metric_card("Report", artifact_status(resolve_report_path(state)), "Markdown artifact")
-    with c6:
-        render_metric_card("PDF", artifact_status(resolve_report_pdf_path(state)), "Academic report")
-    with c7:
-        render_metric_card("Slides", artifact_status(resolve_presentation_path(state)), "Presentation artifact")
-
-    left, right = st.columns([1.05, 1])
-    with left:
-        st.markdown("#### How to explain it")
-        st.markdown(
-            """
-            - **Problem:** one prompt is not enough for serious research.
-            - **Solution:** 10 agents collaborate through typed workflow state.
-            - **Agentic part:** critic/evaluator loops can trigger revisions.
-            - **Output:** report, figures, presentation, score, and memory.
-            """
-        )
-    with right:
-        st.markdown("#### Best demo order")
-        st.markdown(
-            """
-            1. Open **Workflow** and show revision loops.  
-            2. Open **Agents** and show responsibilities.  
-            3. Open **Results** and show score.  
-            4. Open **Figures** and show diagrams.  
-            5. Open **Downloads** and show report/PPTX.
-            """
-        )
+    with c5: metric("Report", artifact_status(resolve_report_path(state)), "Markdown")
+    with c6: metric("PDF", artifact_status(resolve_report_pdf_path(state)), "Final report")
+    with c7: metric("Slides", artifact_status(resolve_presentation_path(state)), "Presentation")
 
 
-def render_workflow_tab(state) -> None:
-    st.markdown('<div class="section-kicker">Agentic control flow</div>', unsafe_allow_html=True)
+def workflow(state: Any) -> None:
+    st.markdown('<div class="kicker">Agentic control flow</div>', unsafe_allow_html=True)
     st.subheader("Workflow with conditional revision loops")
-    st.write("Use this tab to prove the system is more than a fixed prompt chain.")
-
     left, right = st.columns(2)
-    for idx, (agent, icon, description) in enumerate(WORKFLOW_PIPELINE, start=1):
-        target = left if idx % 2 else right
-        with target:
-            st.markdown(
-                f"""
-                <div class="app-card stage-card">
-                    <div class="stage-number">{idx}</div>
-                    <div>
-                        <h4>{_esc(icon)} {_esc(agent)}</h4>
-                        <p>{_esc(description)}</p>
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-    st.markdown("#### Conditional routing")
-    r1, r2 = st.columns(2)
-    for idx, note in enumerate(ROUTING_NOTES):
-        with (r1 if idx == 0 else r2):
-            st.markdown(f'<div class="soft-alert">{_esc(note)}</div>', unsafe_allow_html=True)
-
+    for idx, (name, icon, desc) in enumerate(WORKFLOW_PIPELINE, start=1):
+        with (left if idx % 2 else right):
+            st.markdown(f'<div class="card stage"><div class="num">{idx}</div><div><h4>{esc(icon)} {esc(name)}</h4><p>{esc(desc)}</p></div></div>', unsafe_allow_html=True)
+    for note in ROUTING_NOTES:
+        st.markdown(f'<div class="notice">{esc(note)}</div>', unsafe_allow_html=True)
     with st.expander("Execution plan for this run", expanded=True):
         for step in state.plan:
-            st.markdown(f"- **{_esc(step.agent)}:** {_esc(step.description)}")
+            st.markdown(f"- **{esc(step.agent)}:** {esc(step.description)}")
 
 
-def render_agents_tab(state) -> None:
-    st.markdown('<div class="section-kicker">Intermediate agent outputs</div>', unsafe_allow_html=True)
+def agents(state: Any) -> None:
+    st.markdown('<div class="kicker">Intermediate outputs</div>', unsafe_allow_html=True)
     st.subheader("Agents: who did what")
-    cards = agent_output_cards(state)
-    if not cards:
-        st.warning("No agent outputs recorded.")
-        return
-
-    for idx, card in enumerate(cards, start=1):
-        with st.expander(f"{idx}. {card['icon']} {card['label']} — {card['role']}", expanded=idx <= 3):
-            st.markdown(
-                f"""
-                <div class="app-card">
-                    <span class="agent-status">{_esc(card['status'])}</span>
-                    <h4>{_esc(card['label'])}</h4>
-                    <p><b>Role:</b> {_esc(card['role'])}</p>
-                    <p><b>Output:</b> {_esc(card['content'])}</p>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+    for idx, item in enumerate(agent_output_cards(state), start=1):
+        with st.expander(f"{idx}. {item['icon']} {item['label']} — {item['role']}", expanded=idx <= 3):
+            st.markdown(f'<div class="card"><span class="status-pill">{esc(item["status"])}</span><h4>{esc(item["label"])}</h4><p><b>Role:</b> {esc(item["role"])}</p><p><b>Output:</b> {esc(item["content"])}</p></div>', unsafe_allow_html=True)
 
 
-def render_results_tab(state) -> None:
-    st.markdown('<div class="section-kicker">Quality evaluation</div>', unsafe_allow_html=True)
+def results(state: Any) -> None:
+    st.markdown('<div class="kicker">Quality evaluation</div>', unsafe_allow_html=True)
     st.subheader("Results and grading score")
-
     total = float(state.evaluation.total)
-    passed = total >= EVALUATION_THRESHOLD
-    render_story_card(
-        "Quality verdict",
-        f"{'Passed' if passed else 'Needs revision'}: total score is {total}/100 with threshold {EVALUATION_THRESHOLD}. This score measures artifact quality, not clinical validation.",
-        "✅" if passed else "⚠️",
-    )
-
+    verdict = "Passed" if total >= EVALUATION_THRESHOLD else "Needs revision"
+    card("Quality verdict", f"{verdict}: total score is {total}/100 with threshold {EVALUATION_THRESHOLD}.", "✅")
     for name, score in evaluation_criteria_rows(state):
         st.write(f"**{name}: {score}/100**")
         st.progress(min(max(float(score) / 100.0, 0.0), 1.0))
-
-    st.markdown("#### Full rubric")
-    st.dataframe(
-        {"Criterion": [r[0] for r in evaluation_rows(state)], "Score": [r[1] for r in evaluation_rows(state)]},
-        use_container_width=True,
-        hide_index=True,
-    )
+    st.dataframe({"Criterion": [r[0] for r in evaluation_rows(state)], "Score": [r[1] for r in evaluation_rows(state)]}, use_container_width=True, hide_index=True)
 
 
-def render_figures_tab(state) -> None:
-    st.markdown('<div class="section-kicker">Visual artifacts</div>', unsafe_allow_html=True)
+def figures(state: Any) -> None:
+    st.markdown('<div class="kicker">Visual artifacts</div>', unsafe_allow_html=True)
     st.subheader("Generated figures")
-    png_paths = list_png_figures(state)
-    if not png_paths:
+    paths = list_png_figures(state)
+    if not paths:
         st.warning("No PNG figures available.")
         return
-
     cols = st.columns(2)
-    for idx, path in enumerate(png_paths[:8]):
+    for idx, path in enumerate(paths[:8]):
         with cols[idx % 2]:
-            st.markdown('<div class="app-card">', unsafe_allow_html=True)
             st.image(str(path), use_container_width=True)
             st.caption(f"**{path.name}** — {figure_caption(path)}")
-            st.markdown("</div>", unsafe_allow_html=True)
 
 
-def render_download_card(title: str, path: Path | None, mime: str, label: str, help_text: str) -> None:
-    st.markdown('<div class="app-card">', unsafe_allow_html=True)
-    st.markdown(f'<div class="download-title">{_esc(title)}</div>', unsafe_allow_html=True)
-    st.caption(help_text)
-    if path:
-        st.download_button(f"⬇️ Download {label}", path.read_bytes(), file_name=path.name, mime=mime, use_container_width=True)
-        st.markdown(f'<div class="path-text">{_esc(path)}</div>', unsafe_allow_html=True)
-    else:
-        st.warning(f"{label} not available for this run.")
-    st.markdown("</div>", unsafe_allow_html=True)
-
-
-def render_downloads_tab(state) -> None:
-    st.markdown('<div class="section-kicker">Exported artifacts</div>', unsafe_allow_html=True)
-    st.subheader("Downloads for submission and presentation")
-
-    report_path = resolve_report_path(state)
-    pdf_path = resolve_report_pdf_path(state)
-    presentation_path = resolve_presentation_path(state)
+def downloads(state: Any) -> None:
+    st.markdown('<div class="kicker">Exported artifacts</div>', unsafe_allow_html=True)
+    st.subheader("Downloads")
+    report = resolve_report_path(state)
+    pdf = resolve_report_pdf_path(state)
+    presentation = resolve_presentation_path(state)
     eval_json, eval_md = resolve_evaluation_paths(state)
-
+    def dl(title: str, path: Path | None, mime: str, label: str) -> None:
+        st.markdown(f'<div class="card"><h4>{esc(title)}</h4>', unsafe_allow_html=True)
+        if path:
+            st.download_button(f"⬇️ Download {label}", path.read_bytes(), file_name=path.name, mime=mime, use_container_width=True)
+            st.markdown(f'<div class="path">{esc(path)}</div>', unsafe_allow_html=True)
+        else:
+            st.warning(f"{label} not available.")
+        st.markdown("</div>", unsafe_allow_html=True)
     c1, c2 = st.columns(2)
     with c1:
-        render_download_card("Final PDF Report", pdf_path, "application/pdf", "PDF report", "Best file to show to the professor.")
-        render_download_card(
-            "Presentation",
-            presentation_path,
-            "application/vnd.openxmlformats-officedocument.presentationml.presentation"
-            if presentation_path and presentation_path.suffix == ".pptx"
-            else "text/markdown",
-            "presentation",
-            "Slide artifact generated by the workflow.",
-        )
-        render_download_card("Evaluation JSON", eval_json, "application/json", "evaluation JSON", "Machine-readable score breakdown.")
+        dl("Final PDF Report", pdf, "application/pdf", "PDF")
+        dl("Presentation", presentation, "application/vnd.openxmlformats-officedocument.presentationml.presentation" if presentation and presentation.suffix == ".pptx" else "text/markdown", "presentation")
+        dl("Evaluation JSON", eval_json, "application/json", "evaluation JSON")
     with c2:
-        render_download_card("Markdown Report", report_path, "text/markdown", "Markdown report", "Run-specific report generated from the workflow.")
-        render_download_card("Evaluation Markdown", eval_md, "text/markdown", "evaluation Markdown", "Human-readable evaluation summary.")
+        dl("Markdown Report", report, "text/markdown", "Markdown")
+        dl("Evaluation Markdown", eval_md, "text/markdown", "evaluation Markdown")
 
 
-def render_about_tab() -> None:
-    st.markdown('<div class="section-kicker">Project defense</div>', unsafe_allow_html=True)
+def about(_: Any | None = None) -> None:
+    st.markdown('<div class="kicker">Project defense</div>', unsafe_allow_html=True)
     st.subheader("What to say if the professor asks")
-
-    render_story_card(
-        "Why it is agentic",
-        "Ten specialized agents exchange typed WorkflowState. The Critic and Evaluator can route the graph back for revision, so the workflow is conditional and inspectable.",
-        "🧠",
-    )
-    render_story_card(
-        "Technology stack",
-        "Python, LangGraph-compatible workflow, FastAPI, Streamlit, SQLite, Matplotlib, LaTeX, Pytest, and generated report/presentation artifacts.",
-        "🛠️",
-    )
-    render_story_card(
-        "Academic limitation",
-        "The default demo uses a static mock corpus for reproducibility. It is not a medical device and it is not clinically validated.",
-        "⚠️",
-    )
-
-    with st.expander("Quick talk track"):
-        st.markdown(
-            """
-            This project turns one complex research topic into a full workflow:
-            plan, evidence, analysis, critique, fact-checking, visualizations,
-            report, presentation, evaluation, and memory.
-            """
-        )
+    card("Why it is agentic", "Specialized agents exchange typed workflow state, and the graph has revision loops.", "🧠")
+    card("Technology stack", "Python, LangGraph-compatible workflow, FastAPI, Streamlit, SQLite, Matplotlib, LaTeX, Pytest.", "🛠️")
+    card("Limitation", "The default demo uses a static mock corpus for reproducibility.", "⚠️")
 
 
-render_hero()
-maybe_seed_demo_state()
-
-run_request = render_sidebar()
-if run_request is not None:
-    query, use_mock_llm = run_request
-    run_workflow_ui(query, use_mock_llm)
-
-state = st.session_state.get("last_state")
-render_status_banner(state)
-
-tabs = st.tabs(TAB_NAMES)
-
-renderers = [
-    render_overview,
-    render_workflow_tab,
-    render_agents_tab,
-    render_results_tab,
-    render_figures_tab,
-    render_downloads_tab,
-    render_about_tab,
-]
-
-for tab, renderer in zip(tabs, renderers):
+hero()
+seed_demo()
+request = sidebar()
+if request:
+    run_ui(*request)
+current_state = st.session_state.get("last_state")
+status(current_state)
+renderers = [overview, workflow, agents, results, figures, downloads, about]
+for tab, renderer in zip(st.tabs(TAB_NAMES), renderers):
     with tab:
-        if renderer is render_about_tab:
-            renderer()
-        elif state:
-            renderer(state)
+        if current_state or renderer is about:
+            renderer(current_state)
         else:
-            render_empty_state()
+            empty()
