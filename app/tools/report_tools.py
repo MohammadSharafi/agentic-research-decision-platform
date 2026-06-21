@@ -20,10 +20,17 @@ from app.tools.file_tools import ensure_dir
 
 
 def markdown_table(columns: list[str], rows: list[list[object]]) -> str:
-    header = "| " + " | ".join(columns) + " |"
+    clean_columns = [_markdown_cell(col) for col in columns]
+    clean_rows = [[_markdown_cell(cell) for cell in row] for row in rows]
+    header = "| " + " | ".join(clean_columns) + " |"
     divider = "| " + " | ".join(["---"] * len(columns)) + " |"
-    body = ["| " + " | ".join(str(cell) for cell in row) + " |" for row in rows]
+    body = ["| " + " | ".join(str(cell) for cell in row) + " |" for row in clean_rows]
     return "\n".join([header, divider, *body])
+
+
+def _markdown_cell(value: object) -> str:
+    text = " ".join(str(value).replace("|", "/").split())
+    return text
 
 
 def markdown_to_simple_pdf(markdown: str, output_path: str | Path, title: str) -> Path:

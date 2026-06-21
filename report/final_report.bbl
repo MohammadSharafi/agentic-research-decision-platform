@@ -2,31 +2,21 @@
 
 \bibitem{madaan_2023_self_refine}
 Prakhar Gupta et~al. Aman~Madaan, Niket~Tandon.
-\newblock Self-refine: Iterative refinement with self-feedback.
-\newblock 2023.
+\newblock Self-refine: Iterative refinement with self-feedback, 2023.
 \newblock Demonstrates iterative self-feedback and refinement for improving
   generated outputs without extra training.
-
-\bibitem{amershi_2019_seml}
-Saleema Amershi, Andrew Begel, Christian Bird, et~al.
-\newblock Software engineering for machine learning: A case study.
-\newblock 2019.
-\newblock Discusses testing, reproducibility, and engineering practices for
-  machine learning systems.
 
 \bibitem{garg_2005_cdss}
 Heather McDonald et~al. Amit X.~Garg, Neill K. J.~Adhikari.
 \newblock Effects of computerized clinical decision support systems on
-  practitioner performance and patient outcomes.
-\newblock 2005.
+  practitioner performance and patient outcomes, 2005.
 \newblock Systematic review of computerized clinical decision support effects
   on practitioner performance and patient outcomes.
 
 \bibitem{vasey_2022_decide_ai}
 et~al. Brennan~Vasey, Xiaoxuan~Liu.
 \newblock Decide-ai: New reporting guidelines to bridge the
-  development-to-implementation gap in clinical artificial intelligence.
-\newblock 2022.
+  development-to-implementation gap in clinical artificial intelligence, 2022.
 \newblock Offers early-stage reporting guidance for clinical AI systems before
   full clinical trials.
 
@@ -38,8 +28,8 @@ CrewAI.
 
 \bibitem{bender_2021_stochastic_parrots}
 Angelina McMillan-Major Shmargaret~Shmitchell Emily M.~Bender, Timnit~Gebru.
-\newblock On the dangers of stochastic parrots: Can language models be too big?
-\newblock 2021.
+\newblock On the dangers of stochastic parrots: Can language models be too
+  big?, 2021.
 \newblock Discusses risks of large language models including bias,
   environmental cost, and misleading fluent text.
 
@@ -51,16 +41,14 @@ Google.
 
 \bibitem{singhal_2023_medpalm}
 Tao Tu et~al. Karan~Singhal, Shekoofeh~Azizi.
-\newblock Large language models encode clinical knowledge.
-\newblock 2023.
+\newblock Large language models encode clinical knowledge, 2023.
 \newblock Evaluates large language models on medical question answering and
   discusses opportunities and limitations for medicine.
 
 \bibitem{kawamoto_2005_cdss}
 E.~Andrew Balas David F.~Lobach Kensaku~Kawamoto, Caitlin A.~Houlihan.
 \newblock Improving clinical practice using clinical decision support systems:
-  A systematic review of trials.
-\newblock 2005.
+  A systematic review of trials, 2005.
 \newblock Identifies features associated with effective clinical decision
   support interventions.
 
@@ -78,8 +66,7 @@ Microsoft.
 
 \bibitem{shinn_2023_reflexion}
 Ashwin Gopinath et~al. Noah~Shinn, Federico~Cassano.
-\newblock Reflexion: Language agents with verbal reinforcement learning.
-\newblock 2023.
+\newblock Reflexion: Language agents with verbal reinforcement learning, 2023.
 \newblock Presents a reflection loop for agents that critique prior attempts
   and improve subsequent actions.
 
@@ -91,53 +78,42 @@ World~Health Organization.
 
 \bibitem{lewis_2020_rag}
 Aleksandra Piktus et~al. Patrick~Lewis, Ethan~Perez.
-\newblock Retrieval-augmented generation for knowledge-intensive nlp tasks.
-\newblock 2020.
+\newblock Retrieval-augmented generation for knowledge-intensive nlp tasks,
+  2020.
 \newblock Introduces retrieval-augmented generation, combining parametric
   generation with retrieved non-parametric memory for knowledge-intensive
   tasks.
 
-\bibitem{pytest_docs}
-pytest dev.
-\newblock pytest: Getting started documentation, 2026.
-\newblock Official pytest documentation for writing and running reproducible
-  Python test suites.
-
 \bibitem{autogen_2023}
 Jieyu Zhang et~al. Qingyun~Wu, Gagan~Bansal.
 \newblock Autogen: Enabling next-gen llm applications via multi-agent
-  conversation.
-\newblock 2023.
+  conversation, 2023.
 \newblock Introduces AutoGen, a framework for building LLM applications through
   multi-agent conversation.
 
 \bibitem{sutton_2020_cdss}
 Daniel C. Baumgart et~al. Reed T.~Sutton, David~Pincock.
 \newblock An overview of clinical decision support systems: Benefits, risks,
-  and strategies for success.
-\newblock 2020.
+  and strategies for success, 2020.
 \newblock Reviews clinical decision support benefits, implementation risks,
   human factors, alert fatigue, and governance requirements.
 
 \bibitem{rivera_2020_spirit_ai}
 An-Wen Chan et~al. Samantha Cruz~Rivera, Xiaoxuan~Liu.
 \newblock Spirit-ai extension: Protocol guidelines for clinical trials of
-  artificial intelligence interventions.
-\newblock 2020.
+  artificial intelligence interventions, 2020.
 \newblock Defines protocol reporting items for clinical trials involving AI
   interventions.
 
 \bibitem{es_2023_ragas}
 Luis Espinosa-Anke Steven~Schockaert Shahul~Es, Jithin~James.
-\newblock Ragas: Automated evaluation of retrieval augmented generation.
-\newblock 2023.
+\newblock Ragas: Automated evaluation of retrieval augmented generation, 2023.
 \newblock Defines evaluation dimensions for retrieval-augmented generation
   including faithfulness, answer relevance, and context relevance.
 
 \bibitem{yao_2022_react}
 Dian Yu-et~al. Shunyu~Yao, Jeffrey~Zhao.
-\newblock React: Synergizing reasoning and acting in language models.
-\newblock 2022.
+\newblock React: Synergizing reasoning and acting in language models, 2022.
 \newblock Shows how language models can interleave reasoning traces with tool
   actions for more grounded task solving.
 
@@ -150,15 +126,13 @@ Lilian Weng.
 \bibitem{liu_2020_consort_ai}
 David Moher et~al. Xiaoxuan~Liu, Samantha Cruz~Rivera.
 \newblock Consort-ai extension: Reporting guidelines for clinical trials of
-  artificial intelligence interventions.
-\newblock 2020.
+  artificial intelligence interventions, 2020.
 \newblock Provides reporting standards for clinical trials evaluating AI
   interventions.
 
 \bibitem{ji_2023_hallucination_survey}
 Rita Frieske et~al. Ziwei~Ji, Nayeon~Lee.
-\newblock Survey of hallucination in natural language generation.
-\newblock 2023.
+\newblock Survey of hallucination in natural language generation, 2023.
 \newblock Surveys hallucination definitions, causes, and mitigation methods
   across natural language generation systems.
 

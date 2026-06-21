@@ -49,6 +49,9 @@ class ReportWriterAgent:
         return state
 
     def _build_report(self, state: WorkflowState) -> str:
+        if not state.use_mock_llm:
+            return self._build_research_report(state)
+
         table_blocks = [
             f"**Table {idx}. {table.title}**\n\n{markdown_table(table.columns, table.rows)}"
             for idx, table in enumerate(state.tables, start=1)
@@ -216,6 +219,112 @@ This is a research prototype. It demonstrates architecture, reproducibility, and
 ## 15. Conclusion
 
 The project demonstrates a reproducible and inspectable agentic research workflow. The updated report generator now produces a fuller academic report with robust tables, constrained figures, mathematical formulation, algorithmic pseudocode, UI screenshots, and clearer explanations.
+
+## References
+
+{references}
+"""
+
+    def _build_research_report(self, state: WorkflowState) -> str:
+        confidence = state.analysis.get("confidence_score", 0)
+        eval_score = state.evaluation.total
+        executive_summary = state.analysis.get("executive_summary", "")
+        key_findings = state.analysis.get("key_findings", [])
+
+        table_blocks = []
+        for idx, table in enumerate(state.tables, start=1):
+            if table.title.lower() == "final evaluation scores":
+                continue
+            table_blocks.append(f"**Table {idx}. {table.title}**\n\n{markdown_table(table.columns, table.rows)}")
+
+        figure_blocks = []
+        for idx, figure in enumerate(state.figures, start=1):
+            rel = Path(figure.path).name
+            if figure.figure_type == "mermaid":
+                figure_blocks.append(f"**Figure {idx}. {figure.title}.** See `report/assets/{rel}`.")
+            else:
+                figure_blocks.append(f"**Figure {idx}. {figure.title}.**\n\n![{figure.title}](assets/{rel})")
+
+        claim_lines = []
+        for check in state.claim_checks:
+            citations = "; ".join(check.citations) if check.citations else "not supported by retrieved sources"
+            status = "Supported" if check.supported else "Needs caution"
+            claim_lines.append(f"- **{status}:** {check.claim} — {citations}. {check.note}")
+
+        critique = "\n".join(f"- {item}" for item in state.critique) or "- No critique notes were recorded."
+        findings = "\n".join(f"- {item}" for item in key_findings) or "- No key findings were recorded."
+        references = numbered_references(state.sources)
+
+        return rf"""# Research Report: {state.query}
+
+**Mode:** External model/search capable mode  
+**Run ID:** `{state.run_id}`  
+**Sources retrieved:** {len(state.sources)}  
+**Confidence score:** {confidence}/100  
+**Evaluation score:** {eval_score}/100
+
+## Abstract
+
+{executive_summary}
+
+## 1. Research Question
+
+This report answers the user request:
+
+> {state.query}
+
+The system treated the prompt as a topic-specific research task. It planned the work, retrieved sources, built analysis tables, checked claims, generated figures, wrote this report, and scored the output.
+
+## 2. Methodology
+
+The workflow used a multi-agent pipeline:
+
+1. Planner created a task plan for the prompt.
+2. Research retrieved external sources when API keys were configured.
+3. Analyst synthesized evidence into findings and tables.
+4. Critic identified gaps and cautions.
+5. Fact-Checker mapped claims to retrieved-source citations.
+6. Visualization generated evidence and support charts.
+7. Report Writer produced Markdown and LaTeX/PDF artifacts.
+8. Evaluator scored artifact quality.
+
+The retrieval and synthesis process is summarized by:
+
+```latex
+S(x,q)=\lambda_1 overlap(x,q)+\lambda_2 credibility(x)+\lambda_3 tag\_match(x,q)
+C = 100 \cdot \frac{{\sum_i w_i s_i}}{{\sum_i w_i}}
+Q = \frac{{F+R+M+S+K+L+V+P}}{{8}}
+```
+
+## 3. Key Findings
+
+{findings}
+
+## 4. Analysis Tables
+
+{chr(10).join(table_blocks)}
+
+## 5. Figures
+
+{chr(10).join(figure_blocks) if figure_blocks else "No figures were generated for this run."}
+
+## 6. Claim Checks
+
+{chr(10).join(claim_lines) if claim_lines else "- No claim checks were recorded."}
+
+## 7. Critic Notes and Limitations
+
+{critique}
+
+This report is a machine-generated research synthesis. It should be treated as a first draft that requires human review, especially for policy, financial, health, or legal decisions.
+
+## 8. Evaluation
+
+Final artifact score: **{eval_score}/100**. The score reflects source coverage, claim support, structure, visual artifacts, and reproducibility. It is not a guarantee that every fact is complete or current.
+
+## 9. Conclusion
+
+The run produced a topic-specific research artifact for the prompt rather than a fixed project report. The strongest conclusions are the claims that were supported by retrieved sources; unsupported or weakly supported claims are explicitly marked for caution.
 
 ## References
 

@@ -9,15 +9,16 @@ class ResearchAgent:
 
     def run(self, state: WorkflowState) -> WorkflowState:
         limit = 24 if state.use_mock_llm else (16 if state.revision_count else 12)
-        sources = search_sources(state.query, limit=limit)
+        sources = search_sources(state.query, limit=limit, use_mock_llm=state.use_mock_llm)
         existing = {source.id for source in state.sources}
         for source in sources:
             if source.id not in existing:
                 state.sources.append(source)
         state.status = "researched"
+        mode = "mock corpus" if state.use_mock_llm else "real retrieval adapters"
         state.add_note(
             self.name,
-            f"Retrieved {len(sources)} ranked sources; cumulative evidence base has {len(state.sources)} items.",
+            f"Retrieved {len(sources)} ranked sources using {mode}; cumulative evidence base has {len(state.sources)} items.",
             source_ids=[source.id for source in sources],
         )
         return state

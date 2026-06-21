@@ -60,7 +60,7 @@ This report presents a complete multi-agent research and decision-intelligence p
 \newpage
 
 \section{Executive Summary}
-This final report documents an inspectable agentic research platform, not a single chatbot response. The analyzed run used the topic \textit{Multi-agent AI systems for trustworthy clinical decision support}, operated in Deterministic mock/offline mode, retrieved 21 evidence items, generated 14 visual artifacts, and achieved an evaluation score of 93.1/100 with confidence 95.5/100. The main engineering contribution is a transparent workflow in which planning, retrieval, analysis, critique, fact checking, visualization, reporting, evaluation, presentation, and memory are separate stages with explicit state.
+This final report documents an inspectable agentic research platform, not a single chatbot response. The analyzed run used the topic \textit{Compare LangGraph, AutoGen, and CrewAI for evidence-grounded research workflows.}, operated in Deterministic mock/offline mode, retrieved 21 evidence items, generated 14 visual artifacts, and achieved an evaluation score of 93.1/100 with confidence 95.5/100. The main engineering contribution is a transparent workflow in which planning, retrieval, analysis, critique, fact checking, visualization, reporting, evaluation, presentation, and memory are separate stages with explicit state.
 
 \section{Research Question and Scope}
 The project asks whether a graph-based multi-agent system can produce a more trustworthy research artifact than a one-shot prompt. The scope is a university-grade prototype for evidence-grounded research and decision support, demonstrated on trustworthy clinical decision support. It is not a medical device and it does not provide patient-specific recommendations. The deliverable scope includes runnable code, a Streamlit panel, FastAPI endpoints, SQLite memory, generated figures, Markdown/LaTeX/PDF reports, evaluation output, and presentation material.
@@ -234,6 +234,7 @@ Semantic Kernel & Enterprise-friendly plugins and planners & Broad SDK surface a
 /run & POST & Execute the full agentic workflow \\
 /runs/\{run\_id\} & GET & Retrieve stored run metadata and serialized state \\
 /runs/\{run\_id\}/report & GET & Download the generated Markdown report \\
+/runs/\{run\_id\}/report.pdf & GET & Download the generated PDF report \\
 /runs/\{run\_id\}/presentation & GET & Download the presentation artifact \\
 /runs/\{run\_id\}/figures & GET & List paths to generated figure files \\
 \bottomrule
@@ -405,7 +406,7 @@ return claim check list
 \end{lstlisting}
 
 \section{Evidence and Citation Strategy}
-The retrieval component ranks sources by query overlap, credibility, and tags. The fact checker only cites already-retrieved sources and does not invent references. The strongest evidence themes in this run were: evaluation (9), clinical (8), agentic (8), ethics (6), framework (5), risk (4), decision\_support (3), reporting (3). Table~\ref{tab:evidence-sources} samples the evidence base used by the generated report.
+The retrieval component ranks sources by query overlap, credibility, and tags. The fact checker only cites already-retrieved sources and does not invent references. The strongest evidence themes in this run were: evaluation (9), agentic (8), clinical (8), ethics (6), framework (5), risk (4), reporting (3), decision\_support (3). Table~\ref{tab:evidence-sources} samples the evidence base used by the generated report.
 
 
 \begin{table}[!htbp]
@@ -421,18 +422,18 @@ The retrieval component ranks sources by query overlap, credibility, and tags. T
 \toprule
 \textbf{Type} & \textbf{Year} & \textbf{Credibility} & \textbf{Tags} & \textbf{Title} \\
 \midrule
-paper & 2020 & 0.96 & clinical, decision\_support, risk, ethics & An Overview of Clinical Decision Support Systems: Benefits, Risks, and Strategies for Success \\
-paper & 2005 & 0.94 & clinical, decision\_support, evaluation & Effects of Computerized Clinical Decision Support Systems on Practitioner Performance and Patient Outcomes \\
-paper & 2005 & 0.94 & clinical, decision\_support, evaluation & Improving Clinical Practice Using Clinical Decision Support Systems: A Systematic Review of Trials \\
-guideline & 2022 & 0.96 & clinical, ethics, reporting, evaluation & DECIDE-AI: New Reporting Guidelines to Bridge the Development-to-Implementation Gap in Clinical Artificial Intelligence \\
-docs & 2026 & 0.84 & agentic, framework, adk & Agent Development Kit Multi-Agent Systems Documentation \\
+docs & 2026 & 0.82 & agentic, framework, crewai & CrewAI Documentation \\
+docs & 2026 & 0.86 & agentic, framework, langgraph & LangGraph Graph API Documentation \\
+paper & 2023 & 0.84 & agentic, multi\_agent, framework & AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation \\
 policy & 2021 & 0.98 & clinical, ethics, governance, risk & Ethics and Governance of Artificial Intelligence for Health \\
 guideline & 2020 & 0.97 & clinical, ethics, evaluation, reporting & CONSORT-AI Extension: Reporting Guidelines for Clinical Trials of Artificial Intelligence Interventions \\
 guideline & 2020 & 0.97 & clinical, ethics, reporting & SPIRIT-AI Extension: Protocol Guidelines for Clinical Trials of Artificial Intelligence Interventions \\
+paper & 2020 & 0.96 & clinical, decision\_support, risk, ethics & An Overview of Clinical Decision Support Systems: Benefits, Risks, and Strategies for Success \\
+guideline & 2022 & 0.96 & clinical, ethics, reporting, evaluation & DECIDE-AI: New Reporting Guidelines to Bridge the Development-to-Implementation Gap in Clinical Artificial Intelligence \\
 paper & 2023 & 0.95 & clinical, medical, evaluation, llm & Large Language Models Encode Clinical Knowledge \\
-paper & 2023 & 0.91 & hallucination, evaluation, risk & Survey of Hallucination in Natural Language Generation \\
-paper & 2023 & 0.84 & agentic, multi\_agent, framework & AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation \\
 paper & 2020 & 0.94 & rag, retrieval, hallucination, evidence & Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks \\
+paper & 2005 & 0.94 & clinical, decision\_support, evaluation & Effects of Computerized Clinical Decision Support Systems on Practitioner Performance and Patient Outcomes \\
+paper & 2005 & 0.94 & clinical, decision\_support, evaluation & Improving Clinical Practice Using Clinical Decision Support Systems: A Systematic Review of Trials \\
 \bottomrule
 \end{tabularx}
 \end{adjustbox}
@@ -584,10 +585,10 @@ The mock run completed with 21 sources, 14 figure records, a canonical LaTeX sou
 \section{Claim Checks}
 \begin{itemize}
 \item \textbf{Supported}: Retrieval grounding can reduce unsupported generation by forcing reports to cite external evidence. ((Patrick Lewis, 2020), (Shahul Es, 2023)). Supported by tagged source evidence.
-\item \textbf{Supported}: Clinical decision support requires human oversight and careful workflow integration. ((Amit X. Garg, 2005), (Kensaku Kawamoto, 2005), (Reed T. Sutton, 2020)). Supported by tagged source evidence.
-\item \textbf{Supported}: Conditional multi-agent graphs make critique and revision loops explicit. ((Google, 2026), (Qingyun Wu, 2023), (Shunyu Yao, 2022)). Supported by tagged source evidence.
-\item \textbf{Supported}: Evaluation should include factuality, relevance, structure, citation quality, and reproducibility. ((Amit X. Garg, 2005), (Brennan Vasey, 2022), (Kensaku Kawamoto, 2005)). Supported by tagged source evidence.
-\item \textbf{Supported}: The prototype is not a medical device and should not produce patient-specific diagnosis. ((Brennan Vasey, 2022), (Reed T. Sutton, 2020), (World Health Organization, 2021)). Supported by tagged source evidence.
+\item \textbf{Supported}: Clinical decision support requires human oversight and careful workflow integration. ((Samantha Cruz Rivera, 2020), (World Health Organization, 2021), (Xiaoxuan Liu, 2020)). Supported by tagged source evidence.
+\item \textbf{Supported}: Conditional multi-agent graphs make critique and revision loops explicit. ((CrewAI, 2026), (LangChain, 2026), (Qingyun Wu, 2023)). Supported by tagged source evidence.
+\item \textbf{Supported}: Evaluation should include factuality, relevance, structure, citation quality, and reproducibility. ((Brennan Vasey, 2022), (Karan Singhal, 2023), (Xiaoxuan Liu, 2020)). Supported by tagged source evidence.
+\item \textbf{Supported}: The prototype is not a medical device and should not produce patient-specific diagnosis. ((Samantha Cruz Rivera, 2020), (World Health Organization, 2021), (Xiaoxuan Liu, 2020)). Supported by tagged source evidence.
 \end{itemize}
 
 \section{Critic Notes}

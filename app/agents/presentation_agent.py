@@ -30,6 +30,9 @@ class PresentationAgent:
         return state
 
     def _slide_content(self, state: WorkflowState) -> list[tuple[str, str]]:
+        if not state.use_mock_llm:
+            return self._research_slide_content(state)
+
         score = state.evaluation.total
         confidence = state.analysis.get("confidence_score", 0)
         return [
@@ -45,7 +48,7 @@ class PresentationAgent:
             ("Mock Mode Design", "USE_MOCK_LLM=true runs without paid API keys. A local corpus of 21 verified references keeps outputs deterministic for grading."),
             ("Report Generation Pipeline", "Sources → claim checks → tables → figures → Markdown → LaTeX → PDF → presentation artifacts."),
             ("Mathematical Formulation", "Task decomposition T = {t₁,…,tₙ}; confidence C = Σwᵢsᵢ/Σwᵢ; quality Q = αF+βR+γS+δC_q; revision when Q < τ."),
-            ("API Endpoints", "GET /health; POST /run; GET /runs/{run_id}; GET /runs/{run_id}/report; GET /runs/{run_id}/presentation; GET /runs/{run_id}/figures."),
+            ("API Endpoints", "GET /health; POST /run; GET /runs/{run_id}; GET /runs/{run_id}/report; GET /runs/{run_id}/report.pdf; GET /runs/{run_id}/presentation; GET /runs/{run_id}/figures."),
             ("Evaluation Methodology", "Rubric: factuality, relevance, completeness, structure, citation quality, clarity, visual quality, reproducibility (artifact quality, not clinical validity)."),
             ("Results", f"Final score: {score}/100. Confidence: {confidence}/100. Sources: {len(state.sources)}. Figures: {len(state.figures)}. LaTeX PDF and PPTX generated."),
             (
@@ -75,6 +78,28 @@ class PresentationAgent:
             ),
             ("Future Work", "Live retrieval, vector stores, entailment-based fact checking, human-in-the-loop approval, security hardening, formal clinical evaluation."),
             ("Conclusion", "A reproducible multi-agent prototype that produces inspectable, evidence-grounded academic deliverables suitable for university evaluation."),
+        ]
+
+    def _research_slide_content(self, state: WorkflowState) -> list[tuple[str, str]]:
+        score = state.evaluation.total
+        confidence = state.analysis.get("confidence_score", 0)
+        findings = state.analysis.get("key_findings", [])
+        finding_text = "\n".join(f"- {item}" for item in findings[:5]) if isinstance(findings, list) and findings else "Key findings are available in the final report."
+        supported = sum(1 for check in state.claim_checks if check.supported)
+        return [
+            ("Title", f"Dynamic Research Report\nTopic: {state.query}"),
+            ("Research Question", f"The system analyzed this prompt as a topic-specific research task:\n{state.query}"),
+            ("Workflow", "Planner → Research → Analyst → Critic → Fact-Checker → Visualization → Report Writer → Evaluator → Presentation → Memory."),
+            ("Evidence Base", f"Retrieved sources: {len(state.sources)}. Confidence score: {confidence}/100."),
+            ("Key Findings", finding_text),
+            ("Claim Support", f"Supported claims: {supported}/{len(state.claim_checks)}. Unsupported claims are marked for caution in the PDF."),
+            ("Evaluation", f"Final artifact score: {score}/100. The score reflects source coverage, claim support, tables, figures, and reproducibility."),
+            (
+                "Figures",
+                "The report includes topic-specific evidence charts.\n\n![Evidence themes](../report/assets/evidence_by_theme.png)",
+            ),
+            ("Limitations", "This is a generated research draft. Human review is required before policy, financial, legal, health, or operational use."),
+            ("Conclusion", "The final PDF is the primary output: a prompt-specific research paper grounded in retrieved evidence and claim checks."),
         ]
 
     def _slides(self, state: WorkflowState) -> str:

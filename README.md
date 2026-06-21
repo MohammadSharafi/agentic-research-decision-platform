@@ -6,7 +6,7 @@ The demo scenario is:
 
 > Multi-agent AI systems for trustworthy clinical decision support
 
-The system runs fully offline in deterministic mock mode with real reference metadata, sample evidence, generated figures, Markdown/PDF reports, SQLite run memory, and a presentation artifact. Optional real search/model adapters can be added later without changing the agent contracts.
+The system runs fully offline in deterministic mock mode, and can also run in real mode with OpenAI plus Tavily or SerpAPI adapters for prompt-specific planning, retrieval, synthesis, scoring, figures, Markdown/PDF reports, SQLite run memory, and a presentation artifact.
 
 ![Streamlit control panel and Overview tab](report/assets/ui/ui_home.png)
 
@@ -15,7 +15,7 @@ The system runs fully offline in deterministic mock mode with real reference met
 Given a topic or decision scenario, the platform produces:
 
 - A task decomposition and execution plan.
-- A ranked evidence set from local mock data or optional external search.
+- A ranked evidence set from local mock data or external search adapters.
 - Structured analysis tables and formulas.
 - Critique and revision decisions.
 - Claim-level fact checks with citation markers.
@@ -32,6 +32,7 @@ The project is agentic because specialized agents make and pass structured decis
 - Ten specialized agents: Planner, Research, Data Analyst, Critic, Fact-Checker, Visualization, Report Writer, Evaluator, Presentation, and Memory.
 - LangGraph-style orchestration with conditional revision loops.
 - Deterministic mock mode through `USE_MOCK_LLM=true`.
+- Real non-mock mode through the Streamlit UI, API, or `scripts/run_real_workflow.py`.
 - FastAPI backend and Streamlit demonstration UI.
 - SQLite persistence for run metadata and serialized state.
 - Academic-style report with references, tables, formulas, figures, limitations, ethics, and reproducibility notes.
@@ -101,7 +102,8 @@ For the most polished report PDF, install a LaTeX distribution that provides `pd
 | Variable | Purpose | Default |
 | --- | --- | --- |
 | `USE_MOCK_LLM` | Runs deterministic local mode without paid keys | `true` |
-| `MODEL_PROVIDER` | Placeholder for future model adapters | `mock` |
+| `MODEL_PROVIDER` | Model adapter label, for example `openai` | `mock` |
+| `OPENAI_MODEL` | OpenAI chat model used in real mode | `gpt-4o-mini` |
 | `OPENAI_API_KEY` | Optional external LLM key | empty |
 | `TAVILY_API_KEY` | Optional web search key | empty |
 | `SERPAPI_API_KEY` | Optional web search key | empty |
@@ -121,8 +123,17 @@ API endpoints:
 - `POST /run`
 - `GET /runs/{run_id}`
 - `GET /runs/{run_id}/report`
+- `GET /runs/{run_id}/report.pdf`
 - `GET /runs/{run_id}/presentation`
 - `GET /runs/{run_id}/figures`
+
+Real-mode API example:
+
+```bash
+curl -X POST http://127.0.0.1:8000/run \
+  -H "Content-Type: application/json" \
+  -d '{"query":"Compare Iran and Turkey across economy, healthcare, education, technology, and geopolitical risk.","use_mock_llm":false}'
+```
 
 ## User Interface
 
@@ -176,6 +187,24 @@ python scripts/run_demo.py
 
 This generates a run-specific report, figures, evaluation files, and presentation.
 
+## Run Real Mode
+
+Set `USE_MOCK_LLM=false` in `.env`, set `MODEL_PROVIDER=openai` when using OpenAI, and configure at least one of `OPENAI_API_KEY`, `TAVILY_API_KEY`, or `SERPAPI_API_KEY`. OpenAI is used for dynamic planning and synthesis; Tavily or SerpAPI is used for live source retrieval when available.
+
+CLI:
+
+```bash
+python scripts/run_real_workflow.py "Compare Iran and Turkey across economy, healthcare, education, technology, and geopolitical risk."
+```
+
+UI:
+
+```bash
+streamlit run app/ui/streamlit_app.py
+```
+
+Then choose **Real LLM mode**, enter your prompt, and run the workflow. The run-specific PDF is written under `outputs/reports/{run_id}_final_report.pdf`. The latest run is also copied to `report/final_report.pdf`, so that canonical file is overwritten by each new report run.
+
 ## Generate Reports
 
 ```bash
@@ -199,6 +228,8 @@ Primary final report files:
 - `report/final_report.tex`
 - `report/final_report.pdf`
 - `report/references.bib`
+
+Run-specific PDFs are stored in `outputs/reports/` and are the safest way to reopen an exact previous result.
 
 ## Run Tests
 

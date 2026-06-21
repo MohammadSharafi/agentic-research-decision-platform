@@ -15,6 +15,8 @@ class VisualizationAgent:
         settings = get_settings()
         figure_dir = ensure_dir(settings.output_dir / "figures" / state.run_id)
         asset_dir = ensure_dir(PROJECT_DIR / "report" / "assets")
+        if not state.use_mock_llm:
+            return self._run_dynamic(state, figure_dir, asset_dir)
         figures: list[GeneratedFigure] = []
 
         diagrams = [
@@ -271,4 +273,63 @@ class VisualizationAgent:
         state.figures = figures
         state.status = "visualized"
         state.add_note(self.name, f"Generated {len(figures)} figures and copied them to report/assets.")
+        return state
+
+    def _run_dynamic(self, state: WorkflowState, figure_dir: Path, asset_dir: Path) -> WorkflowState:
+        figures: list[GeneratedFigure] = []
+        tag_counts = state.analysis.get("tag_counts", {})
+        labels = list(tag_counts.keys())[:8] or ["sources"]
+        values = [float(tag_counts.get(label, 0)) for label in labels] or [len(state.sources)]
+        evidence = save_bar_chart(figure_dir / "evidence_by_theme.png", "Evidence Themes for Research Query", labels, values, "Sources")
+        copy_file(evidence, asset_dir / evidence.name)
+        figures.append(
+            GeneratedFigure(
+                id="evidence_by_theme",
+                title="Evidence Themes for Research Query",
+                path=str(evidence),
+                figure_type="chart",
+                description="Topic-specific distribution of retrieved evidence themes.",
+            )
+        )
+
+        type_counts: dict[str, int] = {}
+        for source in state.sources:
+            type_counts[source.source_type] = type_counts.get(source.source_type, 0) + 1
+        type_labels = list(type_counts.keys()) or ["sources"]
+        type_values = [float(type_counts[label]) for label in type_labels] or [0.0]
+        type_chart = save_bar_chart(figure_dir / "source_types.png", "Retrieved Source Types", type_labels, type_values, "Sources")
+        copy_file(type_chart, asset_dir / type_chart.name)
+        figures.append(
+            GeneratedFigure(
+                id="source_types",
+                title="Retrieved Source Types",
+                path=str(type_chart),
+                figure_type="chart",
+                description="Types of sources used in the dynamic research report.",
+            )
+        )
+
+        supported = sum(1 for check in state.claim_checks if check.supported)
+        unsupported = max(len(state.claim_checks) - supported, 0)
+        claim_chart = save_bar_chart(
+            figure_dir / "claim_support.png",
+            "Claim Support Summary",
+            ["Supported", "Unsupported"],
+            [float(supported), float(unsupported)],
+            "Claims",
+        )
+        copy_file(claim_chart, asset_dir / claim_chart.name)
+        figures.append(
+            GeneratedFigure(
+                id="claim_support",
+                title="Claim Support Summary",
+                path=str(claim_chart),
+                figure_type="chart",
+                description="How many extracted claims were supported by retrieved sources.",
+            )
+        )
+
+        state.figures = figures
+        state.status = "visualized"
+        state.add_note(self.name, f"Generated {len(figures)} topic-specific figures and copied them to report/assets.")
         return state

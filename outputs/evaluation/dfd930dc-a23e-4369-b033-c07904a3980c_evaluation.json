@@ -1,0 +1,11 @@
+{
+  "factuality": 96.0,
+  "relevance": 85.7,
+  "completeness": 93.0,
+  "structure": 82.0,
+  "citation_quality": 100.0,
+  "clarity": 82.0,
+  "visual_quality": 90.0,
+  "reproducibility": 86.0,
+  "total": 89.3
+}

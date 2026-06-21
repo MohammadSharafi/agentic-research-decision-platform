@@ -72,19 +72,35 @@ def citation_key(source_id: str) -> str:
     return re.sub(r"[^A-Za-z0-9]+", "_", source_id).strip("_") or "source"
 
 
-def write_bibtex(path: Path, sources: list[Source]) -> None:
-    if path.exists() and path.read_text(encoding="utf-8").count("@") >= len(sources):
+def _bibtex_value(value: object, limit: int = 260) -> str:
+    text = str(value or "")
+    text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", text)
+    text = re.sub(r"https?://\S+", "", text)
+    text = text.replace("\\", " ")
+    text = text.replace("{", "(").replace("}", ")")
+    text = text.replace("&", "and")
+    text = text.replace("%", " percent")
+    text = text.replace("$", "USD ")
+    text = text.replace("#", "")
+    text = " ".join(text.split())
+    if len(text) <= limit:
+        return text
+    return text[: max(0, limit - 3)].rstrip() + "..."
+
+
+def write_bibtex(path: Path, sources: list[Source], preserve_existing: bool = True) -> None:
+    if preserve_existing and path.exists() and path.read_text(encoding="utf-8").count("@") >= len(sources):
         return
     entries: list[str] = []
     for source in sources:
         entry_type = "misc" if source.source_type in {"documentation", "policy", "technical_blog"} else "article"
         entries.append(
             rf"""@{entry_type}{{{citation_key(source.id)},
-  title = {{{source.title}}},
-  author = {{{source.authors}}},
+  title = {{{_bibtex_value(source.title, 180)}}},
+  author = {{{_bibtex_value(source.authors, 120)}}},
   year = {{{source.year or "n.d."}}},
-  url = {{{source.url}}},
-  note = {{{source.summary}}}
+  url = {{{_bibtex_value(source.url, 500)}}},
+  note = {{{_bibtex_value(source.summary, 220)}}}
 }}"""
         )
     write_text(path, "\n\n".join(entries) + "\n")
@@ -261,7 +277,158 @@ def claim_checks(state: WorkflowState) -> str:
     return "\n".join(lines)
 
 
+def key_findings_tex(state: WorkflowState) -> str:
+    findings = state.analysis.get("key_findings", [])
+    if not isinstance(findings, list) or not findings:
+        return r"\item No key findings were recorded."
+    return "\n".join(rf"\item {latex_escape(item)}" for item in findings[:8])
+
+
+def research_tables(state: WorkflowState) -> str:
+    parts: list[str] = []
+    for idx, table in enumerate(state.tables, start=1):
+        if table.title.lower() == "final evaluation scores":
+            continue
+        parts.append(table_tex(table, f"research-table-{idx}"))
+    return "\n".join(parts)
+
+
+def research_figures(report_dir: Path, state: WorkflowState) -> str:
+    parts: list[str] = []
+    for figure in state.figures:
+        path = Path(figure.path)
+        if path.suffix.lower() not in {".png", ".jpg", ".jpeg"}:
+            continue
+        parts.append(figure_tex(report_dir, path.name, figure.description or figure.title, figure.id, r"0.88\linewidth"))
+    return "\n".join(parts)
+
+
+def build_research_latex_document(state: WorkflowState, report_dir: Path) -> str:
+    confidence = state.analysis.get("confidence_score", 0)
+    source_count = state.analysis.get("source_count", len(state.sources))
+    executive_summary = state.analysis.get("executive_summary", "")
+    tag_counts = state.analysis.get("tag_counts", {})
+    top_tags = ", ".join(f"{latex_escape(k)} ({v})" for k, v in sorted(tag_counts.items(), key=lambda x: x[1], reverse=True)[:8]) or "not available"
+    return rf"""\documentclass[11pt]{{article}}
+\usepackage[a4paper,margin=0.82in]{{geometry}}
+\usepackage{{microtype}}
+\usepackage{{graphicx}}
+\usepackage{{booktabs}}
+\usepackage{{tabularx}}
+\usepackage{{array}}
+\usepackage{{ragged2e}}
+\usepackage{{adjustbox}}
+\usepackage{{float}}
+\usepackage{{placeins}}
+\usepackage{{caption}}
+\usepackage{{amsmath}}
+\usepackage{{amssymb}}
+\usepackage{{xcolor}}
+\usepackage{{hyperref}}
+\usepackage{{fancyhdr}}
+\usepackage{{enumitem}}
+\usepackage{{listings}}
+\usepackage{{url}}
+\hypersetup{{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}}
+\graphicspath{{{{assets/}}}}
+\newcolumntype{{Y}}{{>{{\RaggedRight\arraybackslash}}X}}
+\captionsetup{{font=small,labelfont=bf}}
+\definecolor{{codegray}}{{RGB}}{{245,247,250}}
+\lstset{{
+  backgroundcolor=\color{{codegray}},
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  frame=single,
+  columns=fullflexible,
+  keepspaces=true
+}}
+\pagestyle{{fancy}}
+\fancyhf{{}}
+\fancyhead[L]{{\small Dynamic Agentic Research Report}}
+\fancyhead[R]{{\small Final Research Artifact}}
+\fancyfoot[C]{{\thepage}}
+\setlength{{\headheight}}{{14pt}}
+\setlist[itemize]{{leftmargin=1.2em,itemsep=0.25em}}
+\setlength{{\parskip}}{{0.45em}}
+\setlength{{\parindent}}{{0pt}}
+\emergencystretch=2em
+
+\title{{\textbf{{Dynamic Research Report}}\\\large \parbox{{0.92\linewidth}}{{\centering {latex_escape(state.query)}}}}}
+\author{{Agentic Research \& Decision Intelligence Platform}}
+\date{{\today}}
+
+\begin{{document}}
+\maketitle
+
+\begin{{abstract}}
+{latex_escape(executive_summary)}
+\end{{abstract}}
+
+\tableofcontents
+\listoffigures
+\listoftables
+\newpage
+
+\section{{Research Question}}
+This report answers the user request: \textit{{{latex_escape(state.query)}}}. The workflow treated the prompt as a topic-specific research task rather than a fixed platform demonstration. It planned the work, retrieved sources, analyzed evidence, checked claims, generated figures, wrote the report, and evaluated output quality.
+
+\section{{Methodology}}
+The system used a multi-agent workflow with specialized stages: planning, retrieval, analysis, critique, fact checking, visualization, reporting, evaluation, presentation, and memory. In real mode, retrieval uses configured external search adapters when available. The report is grounded in {source_count} retrieved sources. Top evidence themes are: {top_tags}.
+
+\begin{{equation}}
+S(x,q)=\lambda_1\,overlap(x,q)+\lambda_2\,credibility(x)+\lambda_3\,tag\_match(x,q)
+\end{{equation}}
+
+\begin{{equation}}
+C = 100 \cdot \frac{{\sum_i w_i s_i}}{{\sum_i w_i}}
+\end{{equation}}
+
+\begin{{equation}}
+Q=\frac{{F+R+M+S+K+L+V+P}}{{8}}
+\end{{equation}}
+
+For this run, the confidence score is {confidence}/100 and the final evaluation score is {state.evaluation.total}/100.
+
+\section{{Key Findings}}
+\begin{{itemize}}
+{key_findings_tex(state)}
+\end{{itemize}}
+
+\section{{Evidence Tables and Analysis}}
+{research_tables(state)}
+
+\section{{Figures}}
+{research_figures(report_dir, state) or "No topic-specific figures were available for this run."}
+
+\section{{Claim Checks}}
+\begin{{itemize}}
+{claim_checks(state)}
+\end{{itemize}}
+
+\section{{Critic Notes and Limitations}}
+\begin{{itemize}}
+{compact_itemize(state.critique)}
+\end{{itemize}}
+
+This document is a machine-generated first draft. It should be reviewed before being used for policy, financial, health, legal, or operational decisions.
+
+\section{{Evaluation}}
+{evaluation_table(state)}
+
+\section{{Conclusion}}
+The system generated a topic-specific research paper for the prompt. The most reliable conclusions are the claims supported by retrieved sources. Weakly supported claims are explicitly marked for caution, and missing evidence should be treated as a data gap rather than filled with invented precision.
+
+\nocite{{*}}
+\bibliographystyle{{plain}}
+\bibliography{{references}}
+\end{{document}}
+"""
+
+
 def build_latex_document(state: WorkflowState, report_dir: Path) -> str:
+    if not state.use_mock_llm:
+        return build_research_latex_document(state, report_dir)
+
     confidence = state.analysis.get("confidence_score", 0)
     source_count = state.analysis.get("source_count", len(state.sources))
     tag_counts = state.analysis.get("tag_counts", {})
@@ -511,7 +678,7 @@ def generate_latex_report(state: WorkflowState, report_dir: Path, output_report_
     tex_path = report_dir / "final_report.tex"
     pdf_path = report_dir / "final_report.pdf"
     bib_path = report_dir / "references.bib"
-    write_bibtex(bib_path, state.sources)
+    write_bibtex(bib_path, state.sources, preserve_existing=state.use_mock_llm)
     write_text(tex_path, build_latex_document(state, report_dir))
     ok, message = compile_latex_pdf(report_dir, tex_path.name)
     if output_report_pdf is not None and pdf_path.exists():

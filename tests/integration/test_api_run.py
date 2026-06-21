@@ -19,4 +19,8 @@ def test_api_run_endpoint_completes_mock_workflow():
     assert payload["status"] == "completed"
     assert payload["evaluation_total"] >= 78
     assert payload["report_path"]
+    assert payload["report_pdf_path"]
 
+    pdf_response = client.get(f"/runs/{payload['run_id']}/report.pdf")
+    assert pdf_response.status_code == 200
+    assert pdf_response.content.startswith(b"%PDF")

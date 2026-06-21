@@ -104,10 +104,10 @@ class RunResponse(BaseModel):
     run_id: str
     status: str
     report_path: str = ""
+    report_pdf_path: str = ""
     presentation_path: str = ""
     evaluation_total: float = 0
 
 
 def path_for_display(path: str | Path) -> str:
     return str(Path(path).resolve())
-
